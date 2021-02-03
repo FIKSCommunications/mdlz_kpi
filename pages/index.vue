@@ -47,6 +47,8 @@
         :all="hzGetData.all"
         :rate="hzGetData.rate"
         :num="hzGetData.num"
+        :regi="hzGetData.regi"
+        :cavarege="hzGetData.cavarege"
         >
         </summaryGraph>
       </v-col>
@@ -59,6 +61,8 @@
         :all="hzAllData.all"
         :rate="hzAllData.rate"
         :num="hzAllData.num"
+        regi="none"
+        cavarege="none"
         >
         </summaryGraph>
       </v-col>
@@ -71,6 +75,8 @@
         :all="sdAllData.all"
         :rate="sdAllData.rate"
         :num="sdAllData.num"
+        regi="none"
+        cavarege="none"
         >
         </summaryGraph>
       </v-col>
@@ -83,6 +89,8 @@
         :all="dpData.all"
         :rate="dpData.rate"
         :num="dpData.num"
+        regi="none"
+        cavarege="none"
         >
         </summaryGraph>
       </v-col>
@@ -95,6 +103,8 @@
         :all="displayData.all"
         :rate="displayData.rate"
         :num="displayData.num"
+        regi="none"
+        cavarege="none"
         >
         </summaryGraph>
       </v-col>
@@ -107,6 +117,8 @@
         :all="inproData.all"
         :rate="inproData.rate"
         :num="inproData.num"
+        regi="none"
+        cavarege="none"
         >
         </summaryGraph>
       </v-col>
@@ -124,15 +136,17 @@ export default {
   data () {
     return {
       hzGetData:{
+        id:1,
         title:'①　HZ占有率',
-        cols:['レジ台数','占有率','カバレッジ'],
+        cols:['ターゲット','レジ台数','拠点数','カバレッジ','達成率'],
         all :300,
         num  :300,
-        getRate:100,
+        regi:100,
         cavarege:100,
         rate:80,
       },
       hzAllData:{
+        id:2,
         title:'②　HZ総拠点数',
         cols:['ターゲット','拠点数','達成率'],
         all :300,
@@ -140,6 +154,7 @@ export default {
         rate:100,
       },
       sdAllData:{
+        id:3,
         title:'③　SD総拠点数',
         cols:['ターゲット','拠点数','達成率'],
         all :300,
@@ -147,6 +162,7 @@ export default {
         rate:86,
       },
       dpData:{
+        id:4,
         title:'④　DP設置台数',
         cols:['ターゲット','設置台数','達成率'],
         all :300,
@@ -154,6 +170,7 @@ export default {
         rate:130,
       },
       displayData:{
+        id:5,
         title:'⑤　大陳列',
         cols:['ターゲット','大陳回数','達成率'],
         all :300,
@@ -161,6 +178,7 @@ export default {
         rate:99,
       },
       inproData:{
+        id:6,
         title:'⑥　インプロ金額',
         cols:['ターゲット','インプロ金額','達成率'],
         all :300,
