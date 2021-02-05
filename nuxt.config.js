@@ -40,7 +40,7 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-    '@nuxtjs/vuetify'
+    //'@nuxtjs/vuetify'
   ],
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
@@ -74,5 +74,9 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+
+  },
+  router: {
+    base: '/mdlz_kpi/'
   }
 }
