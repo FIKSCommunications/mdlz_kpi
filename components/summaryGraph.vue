@@ -5,7 +5,7 @@
     </v-card-title>
     <v-card-text>
       <v-row>
-        <v-col cols="6">
+        <v-col>
           <v-row>
             <v-col cols="12">
               <v-sheet
@@ -24,8 +24,10 @@
                     <tbody>
                       <tr>
                         <td>{{ all }}</td>
-                        <td>{{ rate }}%</td>
+                        <td v-show="regi!='none'">{{ regi }}</td>
                         <td>{{ num }}</td>
+                        <td v-show="cavarege!='none'">{{ cavarege }}</td>
+                        <td>{{ rate }}%</td>
                       </tr>
                     </tbody>
                   </template>
@@ -48,7 +50,7 @@
             </v-col>
           </v-row>
         </v-col>
-        <v-col class=mt-3>
+        <!-- <v-col class=mt-3>
           <v-progress-linear
             :value="rate"
             :color="rate >= 100 ? 'green' : 'warning' "
@@ -56,7 +58,7 @@
           >
             <strong>{{rate}}%</strong>
           </v-progress-linear>
-        </v-col>
+        </v-col> -->
       </v-row>
       <v-row v-show="viewFlg">
         <v-col cols="12">
@@ -81,8 +83,10 @@
                   <tr v-for="(data, index) in detalData" :key="index">
                     <td>{{data.chq}}</td>
                     <td>{{ data.all }}</td>
-                    <td>{{ data.rate }}%</td>
+                    <td v-show="regi!='none'">{{ data.regi }}</td>
                     <td>{{ data.num }}</td>
+                    <td v-show="cavarege!='none'">{{ data.cavarege }}</td>
+                    <td>{{ rate }}%</td>
                   </tr>
                 </tbody>
               </template>
@@ -104,19 +108,25 @@ export default {
           chq:'イオン',
           all:100,
           num:20,
-          rate:20
+          rate:20,
+          regi:100,
+          cavarege:20,
         },
         {
           chq:'ダイエー',
           all:10,
           num:10,
-          rate:100
+          rate:100,
+          regi:100,
+          cavarege:20
         },
         {
           chq:'イトーヨーカドー',
           all:100,
           num:30,
-          rate:30
+          rate:30,
+          regi:100,
+          cavarege:20,
         },
       ],
     }
@@ -137,6 +147,8 @@ export default {
     'all',
     'rate',
     'num',
+    'regi',
+    'cavarege',
   ]
 }
 </script>
