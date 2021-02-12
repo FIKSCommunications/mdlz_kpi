@@ -41,7 +41,11 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     //'@nuxtjs/vuetify'
+    '@nuxtjs/axios',
   ],
+  axios: {
+
+  },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
