@@ -13,7 +13,7 @@
                   v-model="startDt"
                   label="開始日"
                   outlined
-                  type="date"
+                  type="month"
                   dense
                 ></v-text-field>
               </v-col>
@@ -22,7 +22,7 @@
                   v-model="endDt"
                   label="終了日"
                   outlined
-                  type="date"
+                  type="month"
                   dense
                 ></v-text-field>
               </v-col>
@@ -185,8 +185,8 @@ export default {
         num  :300,
         rate:98,
       },
-      startDt:moment(new Date).startOf("month").format('YYYY-MM-DD'),
-      endDt:moment(new Date).endOf("month").format('YYYY-MM-DD'),
+      startDt:moment(new Date).startOf("month").format('YYYY-MM'),
+      endDt:moment(new Date).endOf("month").format('YYYY-MM'),
       viewFlgSummary:false,
     }
   },
