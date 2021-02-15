@@ -129,6 +129,7 @@
 <script>
 import moment from "moment";
 import summaryGraph from "../components/summaryGraph";
+import axios from 'axios'
 export default {
   components:{
     summaryGraph,
@@ -193,7 +194,26 @@ export default {
   methods:{
     clickAggregate(){
       this.viewFlgSummary = true;
+      this.calcHzGetData();
     },
+    // HZ占有率
+    calcHzGetData(){
+      console.log('axios!')
+      let url = 'http://localhost:8080/cgi-bin/kpi_summary1.py';
+      const response = axios.get(url, {
+        params: {
+          'startdt': '2020-01-01',
+          'enddt': '2020-01-31'
+        }
+      })
+      .then(function(response){
+        console.log('exec!')
+        console.log(response.data);
+        this.hzGetData.regi = response.data.regi;
+        this.hzGetData.num = response.data.kyoten;
+        this.hzGetData.cavarege = response.data.result;
+      }.bind(this));
+    }
 
   },
 }
