@@ -140,11 +140,11 @@ export default {
         id:1,
         title:'①　HZ占有率',
         cols:['ターゲット','レジ台数','拠点数','カバレッジ','達成率'],
-        all :300,
-        num  :300,
-        regi:100,
-        cavarege:100,
-        rate:80,
+        all :0,
+        num  :0,
+        regi:0,
+        cavarege:0,
+        rate:0,
       },
       hzAllData:{
         id:2,
@@ -209,6 +209,7 @@ export default {
       .then(function(response){
         console.log('exec!')
         console.log(response.data);
+        this.hzGetData.all = response.data.target;
         this.hzGetData.regi = response.data.regi;
         this.hzGetData.num = response.data.kyoten;
         this.hzGetData.cavarege = response.data.result;
