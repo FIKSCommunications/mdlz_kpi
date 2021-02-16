@@ -140,11 +140,11 @@ export default {
         id:1,
         title:'①　HZ占有率',
         cols:['ターゲット','レジ台数','拠点数','カバレッジ','達成率'],
-        all :0,
-        num  :0,
-        regi:0,
-        cavarege:0,
-        rate:0,
+        all :300,
+        num  :300,
+        regi:100,
+        cavarege:100,
+        rate:80,
       },
       hzAllData:{
         id:2,
@@ -209,13 +209,101 @@ export default {
       .then(function(response){
         console.log('exec!')
         console.log(response.data);
-        this.hzGetData.all = response.data.target;
-        this.hzGetData.regi = response.data.regi;
+        this.hzGetData.rate = response.data.regi;
         this.hzGetData.num = response.data.kyoten;
         this.hzGetData.cavarege = response.data.result;
       }.bind(this));
-    }
-
+    },
+    // HZ総拠点数
+    calcHzAllGetData(){
+      console.log('axios!')
+      let url = 'http://localhost:8080/cgi-bin/kpi_summary2.py';
+      const response = axios.get(url, {
+        params: {
+          'startdt': '2020-01-01',
+          'enddt': '2020-01-31'
+        }
+      })
+      .then(function(response){
+        console.log('exec!')
+        console.log(response.data);
+        this.hzAllData.all = response.data.regi;
+        this.hzAllData.num = response.data.kyoten;
+        this.hzAllData.rate = response.data.result;
+      }.bind(this));
+    },
+    // SD総拠点数
+    calcHzAllGetData(){
+      console.log('axios!')
+      let url = 'http://localhost:8080/cgi-bin/kpi_summary3.py';
+      const response = axios.get(url, {
+        params: {
+          'startdt': '2020-01-01',
+          'enddt': '2020-01-31'
+        }
+      })
+      .then(function(response){
+        console.log('exec!')
+        console.log(response.data);
+        this.sdAllData.all = response.data.regi;
+        this.sdAllData.num = response.data.kyoten;
+        this.sdAllData.rate = response.data.result;
+      }.bind(this));
+    },
+    // DP設置台数
+    calcHzAllGetData(){
+      console.log('axios!')
+      let url = 'http://localhost:8080/cgi-bin/kpi_summary4.py';
+      const response = axios.get(url, {
+        params: {
+          'startdt': '2020-01-01',
+          'enddt': '2020-01-31'
+        }
+      })
+      .then(function(response){
+        console.log('exec!')
+        console.log(response.data);
+        this.dpData.all = response.data.regi;
+        this.dpData.num = response.data.kyoten;
+        this.dpData.rate = response.data.result;
+      }.bind(this));
+    },
+    // 大陳列
+    calcHzAllGetData(){
+      console.log('axios!')
+      let url = 'http://localhost:8080/cgi-bin/kpi_summary4.py';
+      const response = axios.get(url, {
+        params: {
+          'startdt': '2020-01-01',
+          'enddt': '2020-01-31'
+        }
+      })
+      .then(function(response){
+        console.log('exec!')
+        console.log(response.data);
+        this.displayData.all = response.data.regi;
+        this.displayData.num = response.data.kyoten;
+        this.displayData.rate = response.data.result;
+      }.bind(this));
+    },
+    // インプロ金額
+    calcHzAllGetData(){
+      console.log('axios!')
+      let url = 'http://localhost:8080/cgi-bin/kpi_summary6.py';
+      const response = axios.get(url, {
+        params: {
+          'startdt': '2020-01-01',
+          'enddt': '2020-01-31'
+        }
+      })
+      .then(function(response){
+        console.log('exec!')
+        console.log(response.data);
+        this.inproData.all = response.data.regi;
+        this.inproData.num = response.data.kyoten;
+        this.inproData.rate = response.data.result;
+      }.bind(this));
+    },
   },
 }
 </script>
