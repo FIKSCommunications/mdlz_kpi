@@ -103,32 +103,14 @@ export default {
   data () {
     return {
       viewFlg : false,
-      detalData : [
-        {
-          chq:'イオン',
-          all:100,
-          num:20,
-          rate:20,
-          regi:100,
-          cavarege:20,
-        },
-        {
-          chq:'ダイエー',
-          all:10,
-          num:10,
-          rate:100,
-          regi:100,
-          cavarege:20
-        },
-        {
-          chq:'イトーヨーカドー',
-          all:100,
-          num:30,
-          rate:30,
-          regi:100,
-          cavarege:20,
-        },
-      ],
+      detalData : [],
+    }
+  },
+  watch:{
+    detail: function(){
+      console.log('props change');
+      console.log(this.detail);
+      this.detalData = this.detail;
     }
   },
   methods:{
@@ -149,6 +131,7 @@ export default {
     'num',
     'regi',
     'cavarege',
+    'detail',
   ]
 }
 </script>

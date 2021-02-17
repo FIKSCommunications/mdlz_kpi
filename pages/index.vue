@@ -49,6 +49,7 @@
         :num="hzGetData.num"
         :regi="hzGetData.regi"
         :cavarege="hzGetData.cavarege"
+        :detail="hzGetData.detail"
         >
         </summaryGraph>
       </v-col>
@@ -140,11 +141,12 @@ export default {
         id:1,
         title:'①　HZ占有率',
         cols:['ターゲット','レジ台数','拠点数','カバレッジ','達成率'],
-        all :300,
-        num  :300,
-        regi:100,
-        cavarege:100,
-        rate:80,
+        all :0,
+        num  :0,
+        regi:0,
+        cavarege:0,
+        rate:0,
+        detail:[],
       },
       hzAllData:{
         id:2,
@@ -202,16 +204,45 @@ export default {
       let url = 'http://localhost:8080/cgi-bin/kpi_summary1.py';
       const response = axios.get(url, {
         params: {
-          'startdt': '2020-01-01',
-          'enddt': '2020-01-31'
+          'startdt': this.startDt,
+          'enddt': this.endDt,
+          'clientid': 162,
         }
       })
       .then(function(response){
         console.log('exec!')
         console.log(response.data);
         this.hzGetData.rate = response.data.regi;
-        this.hzGetData.num = response.data.kyoten;
+        this.hzGetData.num = response.data.num;
         this.hzGetData.cavarege = response.data.result;
+        this.hzGetData.detail = response.data
+        /*[
+        {
+          chq:'イオン',
+          all:100,  //ターゲット
+          regi:100,  //レジ台数
+          num:20,  //拠点数
+          cavarege:20,  //カバレッジ
+          rate:20,  //達成率
+        },
+        {
+          chq:'ダイエー',
+          all:10,
+          num:10,
+          rate:100,
+          regi:100,
+          cavarege:20
+        },
+        {
+          chq:'イトーヨーカドー',
+          all:100,
+          num:30,
+          rate:30,
+          regi:100,
+          cavarege:20,
+        },
+      ];
+      */
       }.bind(this));
     },
     // HZ総拠点数
