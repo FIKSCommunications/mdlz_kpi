@@ -197,6 +197,7 @@ export default {
     clickAggregate(){
       this.viewFlgSummary = true;
       this.calcHzGetData();
+      this.calcHzAllGetData();
     },
     // HZ占有率
     calcHzGetData(){
@@ -258,13 +259,13 @@ export default {
       .then(function(response){
         console.log('exec!')
         console.log(response.data);
-        this.hzAllData.all = response.data.regi;
-        this.hzAllData.num = response.data.kyoten;
-        this.hzAllData.rate = response.data.result;
+        // this.hzAllData.all = response.data.regi;
+        // this.hzAllData.num = response.data.kyoten;
+        // this.hzAllData.rate = response.data.result;
       }.bind(this));
     },
     // SD総拠点数
-    calcHzAllGetData(){
+    calcSdAllGetData(){
       console.log('axios!')
       let url = 'http://localhost:8080/cgi-bin/kpi_summary3.py';
       const response = axios.get(url, {
@@ -282,7 +283,7 @@ export default {
       }.bind(this));
     },
     // DP設置台数
-    calcHzAllGetData(){
+    calcDpGetData(){
       console.log('axios!')
       let url = 'http://localhost:8080/cgi-bin/kpi_summary4.py';
       const response = axios.get(url, {
@@ -300,7 +301,7 @@ export default {
       }.bind(this));
     },
     // 大陳列
-    calcHzAllGetData(){
+    calcDisplayGetData(){
       console.log('axios!')
       let url = 'http://localhost:8080/cgi-bin/kpi_summary4.py';
       const response = axios.get(url, {
@@ -318,7 +319,7 @@ export default {
       }.bind(this));
     },
     // インプロ金額
-    calcHzAllGetData(){
+    calcInproGetData(){
       console.log('axios!')
       let url = 'http://localhost:8080/cgi-bin/kpi_summary6.py';
       const response = axios.get(url, {
