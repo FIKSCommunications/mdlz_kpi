@@ -71,32 +71,14 @@ regi = 0
 kyoten = 0
 
 for row in shops:
-    #KPI質問1　回答:レジ台数
+    #KPI質問3　回答:MDLZ製品（ガム、キャンディ、タブ）がある
     sql = 'SELECT kpa_col1 FROM t_report report '\
         'INNER JOIN t_kpi_answer kpa ON kpa.kpa_reportid = report.reportid '\
         'AND kpa.kpa_none = 0 AND kpa.kpa_delete = 0 '\
         'INNER JOIN t_kpi_question kpq ON kpq.kpq_kpiid = report.rp_kpiid '\
-        'AND kpq.kpq_delete = 0 AND kpq.kpq_disporder = 1 '\
+        'AND kpq.kpq_delete = 0 AND kpq.kpq_disporder = 3 '\
         'INNER JOIN t_kpi_row kpr ON kpr.kpr_kpiid = report.rp_kpiid '\
-        'AND kpr.kpr_delete = 0 AND kpr.kpr_disporder = 1 '\
-        'WHERE rp_delete = 0 AND rp_done = 1 '\
-        'AND kpq.kpqid = kpa.kpa_kpqid AND kpr.kprid = kpa.kpa_kprid '\
-        'AND rp_clientid = %s AND rp_shopid = %s AND rp_date <= %s '\
-        'AND rp_date >= %s ORDER BY rp_date DESC LIMIT 1'
-    rows2 = obj.execQuery(sql, [clientid, row['kts_shopid'], enddtstr, startdtstr])
-    if len(rows2) > 0:
-        regi = regi + int(rows2[0]['kpa_col1'])
-        if row['clsp_chqid'] in chqs:
-            chqs[row['clsp_chqid']]['regi'] = chqs[row['clsp_chqid']]['regi'] + int(rows2[0]['kpa_col1'])
-
-    #KPI質問2　回答:MDLZ製品（ガム、キャンディ、タブ）がある
-    sql = 'SELECT kpa_col1 FROM t_report report '\
-        'INNER JOIN t_kpi_answer kpa ON kpa.kpa_reportid = report.reportid '\
-        'AND kpa.kpa_none = 0 AND kpa.kpa_delete = 0 '\
-        'INNER JOIN t_kpi_question kpq ON kpq.kpq_kpiid = report.rp_kpiid '\
-        'AND kpq.kpq_delete = 0 AND kpq.kpq_disporder = 2 '\
-        'INNER JOIN t_kpi_row kpr ON kpr.kpr_kpiid = report.rp_kpiid '\
-        'AND kpr.kpr_delete = 0 AND kpr.kpr_disporder = 1 '\
+        'AND kpr.kpr_delete = 0 AND kpr.kpr_disporder = 3 '\
         'WHERE rp_delete = 0 AND rp_done = 1 '\
         'AND kpq.kpqid = kpa.kpa_kpqid AND kpr.kprid = kpa.kpa_kprid '\
         'AND rp_clientid = %s AND rp_shopid = %s AND rp_date <= %s '\
