@@ -99,8 +99,15 @@ if regi > 0:
     result = num / regi * 100
     result = round(result, 2)
 
-#params = {"regi":regi, "num":num, "result":result}
 chqs = list(chqs.values())
+
+#カバレッジ、達成率の計算
+for chq in chqs:
+    if chq['regi'] > 0:
+        chq['cavarege'] = round((chq['num'] / chq['regi']) * 100, 2)
+    if chq['all'] > 0:
+        chq['rate'] = round((chq['cavarege'] / chq['all']) * 100, 2)
+
 json_str = json.dumps(chqs, indent=2)
 
 # json出力

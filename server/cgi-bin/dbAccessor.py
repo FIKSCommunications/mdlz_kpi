@@ -23,7 +23,7 @@ class dbAccessor:
 
     #ターゲット数値取得
     def getTargetNum(self, qno, month, startdtstr, clientid, year):
-        sql = 'SELECT ktv_chqid, clcq_name as chq, ktv_month%s as `all`, 0 as regi, 0 as num FROM m_kpi_target_value val '\
+        sql = 'SELECT ktv_chqid, clcq_name as chq, ktv_month%s as `all`, 0 as regi, 0 as num, 0 as cavarege, 0 as rate FROM m_kpi_target_value val '\
                 'INNER JOIN t_client_chq ON ktv_chqid = clcq_chqid AND ktv_clientid = clcq_clientid '\
                 'WHERE ktv_delete = 0 AND clcq_delete = 0 '\
                 'AND clcq_term_1 <= %s AND clcq_term_2 >= %s '\

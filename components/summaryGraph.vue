@@ -86,7 +86,7 @@
                     <td v-show="regi!='none'">{{ data.regi }}</td>
                     <td>{{ data.num }}</td>
                     <td v-show="cavarege!='none'">{{ data.cavarege }}</td>
-                    <td>{{ rate }}%</td>
+                    <td>{{ data.rate }}%</td>
                   </tr>
                 </tbody>
               </template>
