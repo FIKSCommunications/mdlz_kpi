@@ -44,9 +44,11 @@ shops = obj.execQuery(sql, [posts.startdtstr, posts.startdtstr, posts.clientid, 
 shops = obj.getTargetShop(1, posts.startdtstr, posts.clientid, posts.startdtYearmonth, posts.enddtYearmonth)
 
 #サマリー初期値
+targetSum = 0
 regi = 0
 num = 0
 result = 0
+rate = 0
 
 #ターゲット店舗毎に集計
 for row in shops:
@@ -94,21 +96,28 @@ for row in shops:
             #CHQ拠点数
             chqs[row['clsp_chqid']]['num'] = chqs[row['clsp_chqid']]['num'] + int(rows2[0]['kpa_col1'])
 
-#サマリーカバレッジ
-if regi > 0:
-    result = num / regi * 100
-    result = round(result, 2)
 
 chqs = list(chqs.values())
 
 #カバレッジ、達成率の計算
 for chq in chqs:
+    targetSum = targetSum + chq['all']
     if chq['regi'] > 0:
         chq['cavarege'] = round((chq['num'] / chq['regi']) * 100, 2)
     if chq['all'] > 0:
         chq['rate'] = round((chq['cavarege'] / chq['all']) * 100, 2)
 
-json_str = json.dumps(chqs, indent=2)
+#サマリーカバレッジ、サマリー達成率
+if regi > 0:
+    result = round(num / regi * 100, 2)
+if result > 0:
+    rate = round(targetSum / result * 100, 2)
+
+#サマリーもJSONに含める
+summary = {'all':targetSum, 'regi':regi, 'num':num, 'cavarege':result, 'rate':rate}
+response = {'summary': summary, 'detail': chqs}
+
+json_str = json.dumps(response, indent=2)
 
 # json出力
 h(json_str)
