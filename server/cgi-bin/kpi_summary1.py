@@ -44,7 +44,7 @@ shops = obj.execQuery(sql, [posts.startdtstr, posts.startdtstr, posts.clientid, 
 shops = obj.getTargetShop(1, posts.startdtstr, posts.clientid, posts.startdtYearmonth, posts.enddtYearmonth)
 
 #サマリー初期値
-targetSum = 0
+targetSum = 35.8  #ここはCSVから取得
 regi = 0
 num = 0
 result = 0
@@ -101,7 +101,7 @@ chqs = list(chqs.values())
 
 #カバレッジ、達成率の計算
 for chq in chqs:
-    targetSum = targetSum + chq['all']
+    #targetSum = targetSum + chq['all']
     if chq['regi'] > 0:
         chq['cavarege'] = round((chq['num'] / chq['regi']) * 100, 2)
     if chq['all'] > 0:
@@ -111,10 +111,10 @@ for chq in chqs:
 if regi > 0:
     result = round(num / regi * 100, 2)
 if result > 0:
-    rate = round(targetSum / result * 100, 2)
+    rate = round(result / targetSum * 100, 2)
 
 #サマリーもJSONに含める
-summary = {'all':targetSum, 'regi':regi, 'num':num, 'cavarege':result, 'rate':rate}
+summary = {'all':35.8, 'regi':regi, 'num':num, 'cavarege':result, 'rate':rate}
 response = {'summary': summary, 'detail': chqs}
 
 json_str = json.dumps(response, indent=2)
