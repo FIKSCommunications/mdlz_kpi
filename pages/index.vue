@@ -65,6 +65,7 @@
         :num="hzAllData.num"
         regi="none"
         cavarege="none"
+        :detail="hzAllData.detail"
         :loading="hzAllData.loading"
         >
         </summaryGraph>
@@ -213,6 +214,7 @@ export default {
   methods:{
     clickAggregate(){
       this.viewFlgSummary = true;
+      this.hzGetData.loading = true;  
       this.calcHzGetData();
       this.calcHzAllGetData();
     },
@@ -246,21 +248,22 @@ export default {
       }.bind(this));
     },
     // HZ総拠点数
-    calcHzAllGetData(){
-      console.log('axios!')
+    calcHzAllGetData(){      
       let url = 'http://localhost:8080/cgi-bin/kpi_summary2.py';
       const response = axios.get(url, {
         params: {
-          'startdt': '2020-01-01',
-          'enddt': '2020-01-31'
+          'startdt': this.startDt,
+          'enddt': this.endDt,
+          'clientid': 162,
+
         }
       })
       .then(function(response){
-        console.log('exec!')
         console.log(response.data);
-        // this.hzAllData.all = response.data.regi;
-        // this.hzAllData.num = response.data.kyoten;
-        // this.hzAllData.rate = response.data.result;
+        this.hzAllData.all = response.data.summary.all;
+        this.hzAllData.num = response.data.summary.num;
+        this.hzAllData.rate = response.data.summary.rate;
+        this.hzAllData.detail = response.data.detail
       }.bind(this))
       .catch(function(error){
         console.log(error);
