@@ -5,7 +5,7 @@ import sys
 import json
 from dbAccessor import dbAccessor
 from inputParser import inputParser
-from my_function import h, e
+from my_function import h, e, int2
 
 # post値取得 startdt:'2021-02' enddt:'2021-02' clientid:162
 posts = inputParser()
@@ -44,11 +44,11 @@ for row in shops:
 
     if len(rows2) > 0:
         #サマリーレジ台数
-        regi = regi + int(rows2[0]['kpa_col1'])
+        regi = regi + int2(rows2[0]['kpa_col1'])
 
         if row['clsp_chqid'] in chqs:
             #CHQレジ台数
-            chqs[row['clsp_chqid']]['regi'] = chqs[row['clsp_chqid']]['regi'] + int(rows2[0]['kpa_col1'])
+            chqs[row['clsp_chqid']]['regi'] = chqs[row['clsp_chqid']]['regi'] + int2(rows2[0]['kpa_col1'])
 
     #KPI質問2　回答:MDLZ製品（ガム、キャンディ、タブ）がある
     sql = 'SELECT kpa_col1 FROM t_report report '\
@@ -66,11 +66,11 @@ for row in shops:
 
     if len(rows2) > 0:
         #サマリー拠点数
-        num = num + int(rows2[0]['kpa_col1'])
+        num = num + int2(rows2[0]['kpa_col1'])
 
         if row['clsp_chqid'] in chqs:
             #CHQ拠点数
-            chqs[row['clsp_chqid']]['num'] = chqs[row['clsp_chqid']]['num'] + int(rows2[0]['kpa_col1'])
+            chqs[row['clsp_chqid']]['num'] = chqs[row['clsp_chqid']]['num'] + int2(rows2[0]['kpa_col1'])
 
 
 chqs = list(chqs.values())
