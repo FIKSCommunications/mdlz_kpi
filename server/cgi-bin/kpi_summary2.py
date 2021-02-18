@@ -53,10 +53,15 @@ for row in shops:
 
 chqs = list(chqs.values())
 
+#詳細表示
+for chq in chqs:
+    #targetSum = targetSum + chq['all']
+    if chq['all'] > 0:
+        chq['rate'] = round((chq['num'] / chq['all']) * 100, 2)
 
-#サマリーカバレッジ、サマリー達成率
-if result > 0:
-    rate = round(result / targetSum * 100, 2)
+#達成率
+if num > 0:
+    rate = round(num / targetSum * 100, 2)
 
 #サマリーもJSONに含める
 summary = {'all':35.8, 'num':num,  'rate':rate}
