@@ -213,37 +213,12 @@ export default {
       .then(function(response){
         console.log('exec!')
         console.log(response.data);
-        this.hzGetData.rate = response.data.regi;
-        this.hzGetData.num = response.data.num;
-        this.hzGetData.cavarege = response.data.result;
-        this.hzGetData.detail = response.data
-        /*[
-        {
-          chq:'イオン',
-          all:100,  //ターゲット
-          regi:100,  //レジ台数
-          num:20,  //拠点数
-          cavarege:20,  //カバレッジ
-          rate:20,  //達成率
-        },
-        {
-          chq:'ダイエー',
-          all:10,
-          num:10,
-          rate:100,
-          regi:100,
-          cavarege:20
-        },
-        {
-          chq:'イトーヨーカドー',
-          all:100,
-          num:30,
-          rate:30,
-          regi:100,
-          cavarege:20,
-        },
-      ];
-      */
+        this.hzGetData.all = response.data.summary.all;
+        this.hzGetData.regi = response.data.summary.regi;
+        this.hzGetData.num = response.data.summary.num;
+        this.hzGetData.cavarege = response.data.summary.cavarege;
+        this.hzGetData.rate = response.data.summary.rate;
+        this.hzGetData.detail = response.data.detail
       }.bind(this));
     },
     // HZ総拠点数

@@ -14,33 +14,9 @@ posts = inputParser()
 obj = dbAccessor()
 
 #ターゲット数値取得
-"""
-sql = 'SELECT ktv_chqid, clcq_name as chq, ktv_month%s as `all`, 0 as regi, 0 as num FROM m_kpi_target_value val '\
-        'INNER JOIN t_client_chq ON ktv_chqid = clcq_chqid AND ktv_clientid = clcq_clientid '\
-        'WHERE ktv_delete = 0 AND clcq_delete = 0 '\
-        'AND clcq_term_1 <= %s AND clcq_term_2 >= %s '\
-        'AND ktv_clientid = %s AND ktv_year = %s AND ktv_qno = 1'
-rows = obj.execQuery(sql, [posts.month, posts.startdtstr, posts.startdtstr, posts.clientid, posts.year])
-"""
 chqs = obj.getTargetNum(1, posts.month, posts.startdtstr, posts.clientid, posts.year)
 
-"""
-#タプル=>辞書型に変換
-chqs = {}
-for row in rows:
-    chqs[row['ktv_chqid']] = dict(row)
-"""
-
 #ターゲット店舗取得
-"""
-sql = 'SELECT kts_shopid, clsp_chqid FROM m_kpi_target_shop kpi '\
-        'INNER JOIN t_client_shop shop ON kts_shopid = clsp_shopid AND kts_clientid = clsp_clientid '\
-        'WHERE kts_delete = 0 AND clsp_delete = 0 '\
-        'AND clsp_term_1 <= %s AND clsp_term_2 >= %s '\
-        'AND kts_clientid = %s AND kts_yearmonth >= %s AND kts_yearmonth <= %s '\
-        'AND kts_question1 = 1 ORDER BY clsp_chqid ASC'
-shops = obj.execQuery(sql, [posts.startdtstr, posts.startdtstr, posts.clientid, posts.startdt, posts.enddt])
-"""
 shops = obj.getTargetShop(1, posts.startdtstr, posts.clientid, posts.startdtYearmonth, posts.enddtYearmonth)
 
 #サマリー初期値
