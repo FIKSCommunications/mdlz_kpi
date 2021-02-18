@@ -60,15 +60,6 @@
             </v-col>
           </v-row>
         </v-col>
-        <!-- <v-col class=mt-3>
-          <v-progress-linear
-            :value="rate"
-            :color="rate >= 100 ? 'green' : 'warning' "
-            height="20"
-          >
-            <strong>{{rate}}%</strong>
-          </v-progress-linear>
-        </v-col> -->
       </v-row>
       <v-row v-show="viewFlg">
         <v-col cols="12">
@@ -119,11 +110,11 @@ export default {
   },
   watch:{
     detail: function(){
-      console.log('props change');
-      console.log(this.detail);
+      console.log('detail change');
       this.detalData = this.detail;
     },
     loading: function(){
+      console.log('loading change');
       this.overlay = this.loading;
     }
   },
@@ -134,7 +125,6 @@ export default {
       } else {
         this.viewFlg = true;
       }
-      console.log(this.viewFlg)
     },
   },
   props:[
