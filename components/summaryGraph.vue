@@ -1,5 +1,15 @@
 <template>
   <v-card>
+    <v-overlay 
+     absolute
+     :value="overlay"
+    >
+      <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
+
     <v-card-title>
       {{title}}
     </v-card-title>
@@ -104,6 +114,7 @@ export default {
     return {
       viewFlg : false,
       detalData : [],
+      overlay: false,
     }
   },
   watch:{
@@ -111,6 +122,9 @@ export default {
       console.log('props change');
       console.log(this.detail);
       this.detalData = this.detail;
+    },
+    loading: function(){
+      this.overlay = this.loading;
     }
   },
   methods:{
@@ -132,6 +146,7 @@ export default {
     'regi',
     'cavarege',
     'detail',
+    'loading',
   ]
 }
 </script>

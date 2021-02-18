@@ -50,6 +50,7 @@
         :regi="hzGetData.regi"
         :cavarege="hzGetData.cavarege"
         :detail="hzGetData.detail"
+        :loading="hzGetData.loading"
         >
         </summaryGraph>
       </v-col>
@@ -64,6 +65,7 @@
         :num="hzAllData.num"
         regi="none"
         cavarege="none"
+        :loading="hzAllData.loading"
         >
         </summaryGraph>
       </v-col>
@@ -78,6 +80,7 @@
         :num="sdAllData.num"
         regi="none"
         cavarege="none"
+        :loading="sdAllData.loading"
         >
         </summaryGraph>
       </v-col>
@@ -92,6 +95,7 @@
         :num="dpData.num"
         regi="none"
         cavarege="none"
+        :loading="dpData.loading"
         >
         </summaryGraph>
       </v-col>
@@ -106,6 +110,7 @@
         :num="displayData.num"
         regi="none"
         cavarege="none"
+        :loading="displayData.loading"
         >
         </summaryGraph>
       </v-col>
@@ -120,6 +125,7 @@
         :num="inproData.num"
         regi="none"
         cavarege="none"
+        :loading="inproData.loading"
         >
         </summaryGraph>
       </v-col>
@@ -147,46 +153,57 @@ export default {
         cavarege:0,
         rate:0,
         detail:[],
+        loading:false,
       },
       hzAllData:{
         id:2,
         title:'②　HZ総拠点数',
         cols:['ターゲット','拠点数','達成率'],
-        all :300,
-        num  :300,
-        rate:100,
+        all :0,
+        num  :0,
+        rate:0,
+        detail:[],
+        loading:false,
       },
       sdAllData:{
         id:3,
         title:'③　SD総拠点数',
         cols:['ターゲット','拠点数','達成率'],
-        all :300,
-        num  :300,
-        rate:86,
+        all :0,
+        num  :0,
+        rate:0,
+        detail:[],
+        loading:false,
       },
       dpData:{
         id:4,
         title:'④　DP設置台数',
         cols:['ターゲット','設置台数','達成率'],
-        all :300,
-        num  :300,
-        rate:130,
+        all :0,
+        num  :0,
+        rate:0,
+        detail:[],
+        loading:false,
       },
       displayData:{
         id:5,
         title:'⑤　大陳列',
         cols:['ターゲット','大陳回数','達成率'],
-        all :300,
-        num  :300,
-        rate:99,
+        all :0,
+        num  :0,
+        rate:0,
+        detail:[],
+        loading:false,
       },
       inproData:{
         id:6,
         title:'⑥　インプロ金額',
         cols:['ターゲット','インプロ金額','達成率'],
-        all :300,
-        num  :300,
-        rate:98,
+        all :0,
+        num  :0,
+        rate:0,
+        detail:[],
+        loading:false,
       },
       startDt:moment(new Date).startOf("month").format('YYYY-MM'),
       endDt:moment(new Date).endOf("month").format('YYYY-MM'),
@@ -201,7 +218,8 @@ export default {
     },
     // HZ占有率
     calcHzGetData(){
-      console.log('axios!')
+      this.hzGetData.loading = true;
+
       let url = 'http://localhost:8080/cgi-bin/kpi_summary1.py';
       const response = axios.get(url, {
         params: {
@@ -219,6 +237,12 @@ export default {
         this.hzGetData.cavarege = response.data.summary.cavarege;
         this.hzGetData.rate = response.data.summary.rate;
         this.hzGetData.detail = response.data.detail
+      }.bind(this))
+      .catch(function(error){
+        console.log(error);
+      })
+      .finally(function(){
+        this.hzGetData.loading = false;        
       }.bind(this));
     },
     // HZ総拠点数
@@ -237,6 +261,12 @@ export default {
         // this.hzAllData.all = response.data.regi;
         // this.hzAllData.num = response.data.kyoten;
         // this.hzAllData.rate = response.data.result;
+      }.bind(this))
+      .catch(function(error){
+        console.log(error);
+      })
+      .finally(function(){
+        this.hzAllData.loading = false;        
       }.bind(this));
     },
     // SD総拠点数
@@ -255,6 +285,12 @@ export default {
         this.sdAllData.all = response.data.regi;
         this.sdAllData.num = response.data.kyoten;
         this.sdAllData.rate = response.data.result;
+      }.bind(this))
+      .catch(function(error){
+        console.log(error);
+      })
+      .finally(function(){
+        this.sdAllData.loading = false;        
       }.bind(this));
     },
     // DP設置台数
@@ -273,6 +309,12 @@ export default {
         this.dpData.all = response.data.regi;
         this.dpData.num = response.data.kyoten;
         this.dpData.rate = response.data.result;
+      }.bind(this))
+      .catch(function(error){
+        console.log(error);
+      })
+      .finally(function(){
+        this.dpData.loading = false;        
       }.bind(this));
     },
     // 大陳列
@@ -291,6 +333,12 @@ export default {
         this.displayData.all = response.data.regi;
         this.displayData.num = response.data.kyoten;
         this.displayData.rate = response.data.result;
+      }.bind(this))
+      .catch(function(error){
+        console.log(error);
+      })
+      .finally(function(){
+        this.displayData.loading = false;        
       }.bind(this));
     },
     // インプロ金額
@@ -309,6 +357,12 @@ export default {
         this.inproData.all = response.data.regi;
         this.inproData.num = response.data.kyoten;
         this.inproData.rate = response.data.result;
+      }.bind(this))
+      .catch(function(error){
+        console.log(error);
+      })
+      .finally(function(){
+        this.inproData.loading = false;        
       }.bind(this));
     },
   },
