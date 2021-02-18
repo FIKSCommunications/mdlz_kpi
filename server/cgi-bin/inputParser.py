@@ -21,8 +21,8 @@ class inputParser:
             e('not found clientid')
             sys.exit()
         """
-        self.startdt = form.getfirst('startdt', '2021-01')
-        self.enddt = form.getfirst('enddt', '2021-01')
+        self.startdt = form.getfirst('startdt', '2021-02')
+        self.enddt = form.getfirst('enddt', '2021-02')
         self.clientid = form.getfirst('clientid', 162)
 
         self.startdtYearmonth = self.startdt.replace('-','')

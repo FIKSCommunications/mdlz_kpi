@@ -60,15 +60,6 @@
             </v-col>
           </v-row>
         </v-col>
-        <!-- <v-col class=mt-3>
-          <v-progress-linear
-            :value="rate"
-            :color="rate >= 100 ? 'green' : 'warning' "
-            height="20"
-          >
-            <strong>{{rate}}%</strong>
-          </v-progress-linear>
-        </v-col> -->
       </v-row>
       <v-row v-show="viewFlg">
         <v-col cols="12">

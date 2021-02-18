@@ -222,6 +222,7 @@ export default {
       this.calcHzAllGetData();
 
       this.calcDpGetData();
+      this.calcDisplayGetData();
     },
     // 1.HZ占有率
     calcHzGetData(){
@@ -328,10 +329,11 @@ export default {
         this.dpData.loading = false;        
       }.bind(this));
     },
-    // 大陳列
+    // 5.大陳列
     calcDisplayGetData(){
-      console.log('axios!')
-      let url = 'http://localhost:8080/cgi-bin/kpi_summary4.py';
+      this.displayData.loading = true;
+
+      let url = 'http://localhost:8080/cgi-bin/kpi_summary5.py';
       const response = axios.get(url, {
         params: {
           'startdt': this.startDt,
@@ -340,11 +342,12 @@ export default {
         }
       })
       .then(function(response){
-        console.log('exec!')
+        console.log('exec Display')
         console.log(response.data);
-        this.displayData.all = response.data.regi;
-        this.displayData.num = response.data.kyoten;
-        this.displayData.rate = response.data.result;
+        this.displayData.all = response.data.summary.all;
+        this.displayData.num = response.data.summary.num;
+        this.displayData.rate = response.data.summary.rate;
+        this.displayData.detail = response.data.detail;
       }.bind(this))
       .catch(function(error){
         console.log(error);
