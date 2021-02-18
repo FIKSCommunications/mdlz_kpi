@@ -65,6 +65,7 @@
         :num="hzAllData.num"
         regi="none"
         cavarege="none"
+        :detail="hzAllData.detail"
         :loading="hzAllData.loading"
         >
         </summaryGraph>
@@ -80,6 +81,7 @@
         :num="sdAllData.num"
         regi="none"
         cavarege="none"
+        :detail="sdAllData.detail"
         :loading="sdAllData.loading"
         >
         </summaryGraph>
@@ -95,6 +97,7 @@
         :num="dpData.num"
         regi="none"
         cavarege="none"
+        :detail="dpData.detail"
         :loading="dpData.loading"
         >
         </summaryGraph>
@@ -110,6 +113,7 @@
         :num="displayData.num"
         regi="none"
         cavarege="none"
+        :detail="displayData.detail"
         :loading="displayData.loading"
         >
         </summaryGraph>
@@ -125,6 +129,7 @@
         :num="inproData.num"
         regi="none"
         cavarege="none"
+        :detail="inproData.detail"
         :loading="inproData.loading"
         >
         </summaryGraph>
@@ -215,8 +220,10 @@ export default {
       this.viewFlgSummary = true;
       this.calcHzGetData();
       this.calcHzAllGetData();
+
+      this.calcDpGetData();
     },
-    // HZ占有率
+    // 1.HZ占有率
     calcHzGetData(){
       this.hzGetData.loading = true;
 
@@ -229,8 +236,6 @@ export default {
         }
       })
       .then(function(response){
-        console.log('exec!')
-        console.log(response.data);
         this.hzGetData.all = response.data.summary.all;
         this.hzGetData.regi = response.data.summary.regi;
         this.hzGetData.num = response.data.summary.num;
@@ -245,14 +250,15 @@ export default {
         this.hzGetData.loading = false;        
       }.bind(this));
     },
-    // HZ総拠点数
+    // 2.HZ総拠点数
     calcHzAllGetData(){
       console.log('axios!')
       let url = 'http://localhost:8080/cgi-bin/kpi_summary2.py';
       const response = axios.get(url, {
         params: {
-          'startdt': '2020-01-01',
-          'enddt': '2020-01-31'
+          'startdt': this.startDt,
+          'enddt': this.endDt,
+          'clientid': 162,
         }
       })
       .then(function(response){
@@ -269,14 +275,15 @@ export default {
         this.hzAllData.loading = false;        
       }.bind(this));
     },
-    // SD総拠点数
+    // 3.SD総拠点数
     calcSdAllGetData(){
       console.log('axios!')
       let url = 'http://localhost:8080/cgi-bin/kpi_summary3.py';
       const response = axios.get(url, {
         params: {
-          'startdt': '2020-01-01',
-          'enddt': '2020-01-31'
+          'startdt': this.startDt,
+          'enddt': this.endDt,
+          'clientid': 162,
         }
       })
       .then(function(response){
@@ -293,22 +300,26 @@ export default {
         this.sdAllData.loading = false;        
       }.bind(this));
     },
-    // DP設置台数
+    // 4.DP設置台数
     calcDpGetData(){
-      console.log('axios!')
+      this.dpData.loading = true;
+
       let url = 'http://localhost:8080/cgi-bin/kpi_summary4.py';
       const response = axios.get(url, {
         params: {
-          'startdt': '2020-01-01',
-          'enddt': '2020-01-31'
+          'startdt': this.startDt,
+          'enddt': this.endDt,
+          'clientid': 162,
         }
       })
       .then(function(response){
-        console.log('exec!')
+        console.log('exec Dp!')
         console.log(response.data);
-        this.dpData.all = response.data.regi;
-        this.dpData.num = response.data.kyoten;
-        this.dpData.rate = response.data.result;
+        this.dpData.all = response.data.summary.all;
+        this.dpData.num = response.data.summary.num;
+        this.dpData.rate = response.data.summary.rate;
+        this.dpData.detail = response.data.detail;
+        console.log(this.dpData.detail);
       }.bind(this))
       .catch(function(error){
         console.log(error);
@@ -323,8 +334,9 @@ export default {
       let url = 'http://localhost:8080/cgi-bin/kpi_summary4.py';
       const response = axios.get(url, {
         params: {
-          'startdt': '2020-01-01',
-          'enddt': '2020-01-31'
+          'startdt': this.startDt,
+          'enddt': this.endDt,
+          'clientid': 162,
         }
       })
       .then(function(response){
@@ -347,8 +359,9 @@ export default {
       let url = 'http://localhost:8080/cgi-bin/kpi_summary6.py';
       const response = axios.get(url, {
         params: {
-          'startdt': '2020-01-01',
-          'enddt': '2020-01-31'
+          'startdt': this.startDt,
+          'enddt': this.endDt,
+          'clientid': 162,
         }
       })
       .then(function(response){

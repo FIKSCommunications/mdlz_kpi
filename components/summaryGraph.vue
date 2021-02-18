@@ -119,11 +119,11 @@ export default {
   },
   watch:{
     detail: function(){
-      console.log('props change');
-      console.log(this.detail);
+      console.log('detail change');
       this.detalData = this.detail;
     },
     loading: function(){
+      console.log('loading change');
       this.overlay = this.loading;
     }
   },
@@ -134,7 +134,6 @@ export default {
       } else {
         this.viewFlg = true;
       }
-      console.log(this.viewFlg)
     },
   },
   props:[
