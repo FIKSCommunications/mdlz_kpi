@@ -104,12 +104,6 @@ for mon in posts.months:
         else:
             gChqs[k] = v
 
-    #サマリーカバレッジ、サマリー達成率
-    if regi > 0:
-        result = round(num / regi * 100, 2)
-    if result > 0:
-        rate = round(result / targetSum * 100, 2)
-
     gTargetSum += targetSum
     gRegi += regi
     gNum += num
