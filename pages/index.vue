@@ -218,10 +218,9 @@ export default {
   methods:{
     clickAggregate(){
       this.viewFlgSummary = true;
-      this.hzGetData.loading = true;  
       this.calcHzGetData();
       this.calcHzAllGetData();
-
+      this.calcSdAllGetData() ;
       this.calcDpGetData();
       this.calcDisplayGetData();
     },
@@ -254,6 +253,7 @@ export default {
     },
     // HZ総拠点数
     calcHzAllGetData(){      
+      this.hzAllData.loading = true;
       let url = 'http://localhost:8080/cgi-bin/kpi_summary2.py';
       const response = axios.get(url, {
         params: {
@@ -278,6 +278,7 @@ export default {
     },
     // 3.SD総拠点数
     calcSdAllGetData(){
+      this.sdAllData.loading = true;
       console.log('axios!')
       let url = 'http://localhost:8080/cgi-bin/kpi_summary3.py';
       const response = axios.get(url, {
@@ -290,9 +291,10 @@ export default {
       .then(function(response){
         console.log('exec!')
         console.log(response.data);
-        this.sdAllData.all = response.data.regi;
-        this.sdAllData.num = response.data.kyoten;
-        this.sdAllData.rate = response.data.result;
+        this.sdAllData.all = response.data.summary.all;
+        this.sdAllData.num = response.data.summary.num;
+        this.sdAllData.rate = response.data.summary.rate;
+        this.sdAllData.detail = response.data.detail
       }.bind(this))
       .catch(function(error){
         console.log(error);
