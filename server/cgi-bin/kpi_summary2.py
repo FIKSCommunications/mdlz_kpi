@@ -14,16 +14,14 @@ posts = inputParser()
 obj = dbAccessor()
 
 #ターゲット数値取得
-chqs = obj.getTargetNum(1, posts.month, posts.startdtstr, posts.clientid, posts.year)
+chqs = obj.getTargetNum(2, posts.month, posts.startdtstr, posts.clientid, posts.year)
 
 #ターゲット店舗取得
-shops = obj.getTargetShop(1, posts.startdtstr, posts.clientid, posts.startdtYearmonth, posts.enddtYearmonth)
+shops = obj.getTargetShop(2, posts.startdtstr, posts.clientid, posts.startdtYearmonth, posts.enddtYearmonth)
 
 #サマリー初期値
-targetSum = 35.8  #ここはCSVから取得
-regi = 0
+targetSum = 11802  #ここはCSVから取得
 num = 0
-result = 0
 rate = 0
 
 #ターゲット店舗毎に集計
@@ -44,7 +42,7 @@ for row in shops:
 
     if len(rows2) > 0:
         #展開面数
-        num = num + int(rows2[0]['kpa_col1'])
+        num = num + 1
 
         if row['clsp_chqid'] in chqs:
             #CHQ拠点数
@@ -64,7 +62,7 @@ if num > 0:
     rate = round(num / targetSum * 100, 2)
 
 #サマリーもJSONに含める
-summary = {'all':35.8, 'num':num,  'rate':rate}
+summary = {'all':targetSum, 'num':num,  'rate':rate}
 response = {'summary': summary, 'detail': chqs}
 
 json_str = json.dumps(response, indent=2)
