@@ -10,6 +10,7 @@ class inputParser:
 
     def __init__(self):
         form = cgi.FieldStorage()
+
         """
         if 'startdt' not in form:
             e('not found startdt')
@@ -21,10 +22,12 @@ class inputParser:
             e('not found clientid')
             sys.exit()
         """
-        self.startdt = form.getfirst('startdt', '2021-02')
+        self.startdt = form.getfirst('startdt', '2021-01')
         self.enddt = form.getfirst('enddt', '2021-02')
         self.clientid = form.getfirst('clientid', 162)
 
+        """
+        #単月対応
         self.startdtYearmonth = self.startdt.replace('-','')
         self.enddtYearmonth = self.enddt.replace('-','')
 
@@ -43,6 +46,7 @@ class inputParser:
         #終了月が本日と同年月の場合は昨日とする
         if self.todayYearmonth == self.enddt:
             self.enddtstr = self.yesterdaystr
+            enddts = self.enddtstr.split('-')
         else:
             enddts = self.enddt.split('-')
             self.enddtstr = get_last_date(int(enddts[0]), int(enddts[1]))
@@ -51,4 +55,48 @@ class inputParser:
         startdts = self.startdt.split('-')
         self.year = int(startdts[0])
         self.month = int(startdts[1])
-    
+        """
+
+
+
+        #複数月対応
+        startdts = self.startdt.split('-')
+        enddts = self.enddt.split('-')
+        msu = (int(enddts[0]) - int(startdts[0])) * 12 + int(enddts[1]) - int(startdts[1]) + 1
+
+        today = datetime.today()
+        todayYearmonth = datetime.strftime(today, '%Y%m')
+        yesterday = today - timedelta(days=1)
+        yesterdaystr = datetime.strftime(yesterday, '%Y-%m-%d')
+
+        self.months = []
+        temp_y = int(startdts[0])
+        temp_m = int(startdts[1])
+        for i in range(msu):
+            year = temp_y
+            month = temp_m
+            startdtYearmonth = str(temp_y) + str(temp_m).zfill(2)
+            startdtstr = str(temp_y) + '-' + str(temp_m).zfill(2) + '-01'
+            enddtYearmonth = startdtYearmonth
+
+            #終了月が本日と同年月の場合は昨日とする
+            if todayYearmonth == startdtYearmonth:
+                enddtstr = str(yesterdaystr)
+            else:
+                enddtstr = str(get_last_date(temp_y, temp_m))
+
+            thismonth = {
+                'year':year, 
+                'month':month, 
+                'startdtYearmonth':startdtYearmonth,
+                'startdtstr':startdtstr,
+                'enddtYearmonth':enddtYearmonth,
+                'enddtstr':enddtstr,
+                'clientid':self.clientid,
+            }
+            self.months.append(thismonth)
+            if temp_m < 12:
+                temp_m = temp_m + 1
+            else:
+                temp_m = 1
+                temp_y = temp_y + 1 
