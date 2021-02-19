@@ -23,7 +23,7 @@ class inputParser:
             sys.exit()
         """
         self.startdt = form.getfirst('startdt', '2021-01')
-        self.enddt = form.getfirst('enddt', '2021-02')
+        self.enddt = form.getfirst('enddt', '2021-01')
         self.clientid = form.getfirst('clientid', 162)
 
         """

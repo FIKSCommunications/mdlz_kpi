@@ -7,6 +7,15 @@ from dbAccessor import dbAccessor
 from inputParser import inputParser
 from my_function import h, e
 
+def displayCalc(lists):
+    ret = 0
+    pre = 0
+    for i in lists:
+        if i >= 10 and i > pre:
+            ret += 1
+        pre = i
+    return ret
+ 
 # post値取得 startdt:'2021-02' enddt:'2021-02' clientid:162 months:['2021-01', '2021-02']
 # [{
 #   month:1,
@@ -58,9 +67,17 @@ for mon in posts.months:
             'WHERE rp_delete = 0 AND rp_done = 1 '\
             'AND kpq.kpqid = kpa.kpa_kpqid AND kpr.kprid = kpa.kpa_kprid '\
             'AND rp_clientid = %s AND rp_shopid = %s AND rp_date <= %s '\
-            'AND rp_date >= %s ORDER BY rp_date DESC LIMIT 2'
+            'AND rp_date >= %s ORDER BY rp_date ASC'
         gum = obj.execQuery(sql, [mon['clientid'], row['kts_shopid'], mon['enddtstr'], mon['startdtstr']])
 
+        lists = [d.get('sum') for d in gum]
+        ret = displayCalc(lists)
+        num = num + ret
+        if row['clsp_chqid'] in chqs:
+            #CHQガムF数
+            chqs[row['clsp_chqid']]['num'] = chqs[row['clsp_chqid']]['num'] + ret
+
+        """
         if len(gum) == 2:
             if gum[0]['sum'] >= 10 and gum[0]['sum'] > gum[1]['sum']:
                 num = num + 1
@@ -73,7 +90,7 @@ for mon in posts.months:
                 if row['clsp_chqid'] in chqs:
                     #CHQガムF数
                     chqs[row['clsp_chqid']]['num'] = chqs[row['clsp_chqid']]['num'] + 1
-        
+        """        
 
         #KPI質問6 キャンディタブF数
         sql = 'SELECT kpa_col1 + kpa_col2 as sum FROM t_report report '\
@@ -86,9 +103,17 @@ for mon in posts.months:
             'WHERE rp_delete = 0 AND rp_done = 1 '\
             'AND kpq.kpqid = kpa.kpa_kpqid AND kpr.kprid = kpa.kpa_kprid '\
             'AND rp_clientid = %s AND rp_shopid = %s AND rp_date <= %s '\
-            'AND rp_date >= %s ORDER BY rp_date DESC LIMIT 2'
+            'AND rp_date >= %s ORDER BY rp_date ASC'
         candy = obj.execQuery(sql, [mon['clientid'], row['kts_shopid'], mon['enddtstr'], mon['startdtstr']])
 
+        lists = [d.get('sum') for d in candy]
+        ret = displayCalc(lists)
+        num = num + ret
+        if row['clsp_chqid'] in chqs:
+            #CHQキャンディF数
+            chqs[row['clsp_chqid']]['num'] = chqs[row['clsp_chqid']]['num'] + ret
+
+        """
         if len(candy) == 2:
             if candy[0]['sum'] >= 10 and candy[0]['sum'] > candy[1]['sum']:
                 num = num + 1
@@ -101,7 +126,7 @@ for mon in posts.months:
                 if row['clsp_chqid'] in chqs:
                     #CHQキャンディF数
                     chqs[row['clsp_chqid']]['num'] = chqs[row['clsp_chqid']]['num'] + 1
-
+        """
 
 
 
@@ -116,9 +141,17 @@ for mon in posts.months:
             'WHERE rp_delete = 0 AND rp_done = 1 '\
             'AND kpq.kpqid = kpa.kpa_kpqid AND kpr.kprid = kpa.kpa_kprid '\
             'AND rp_clientid = %s AND rp_shopid = %s AND rp_date <= %s '\
-            'AND rp_date >= %s ORDER BY rp_date DESC LIMIT 2'
+            'AND rp_date >= %s ORDER BY rp_date ASC'
         viscuit = obj.execQuery(sql, [mon['clientid'], row['kts_shopid'], mon['enddtstr'], mon['startdtstr']])
 
+        lists = [d.get('sum') for d in viscuit]
+        ret = displayCalc(lists)
+        num = num + ret
+        if row['clsp_chqid'] in chqs:
+            #CHQビスケットF数
+            chqs[row['clsp_chqid']]['num'] = chqs[row['clsp_chqid']]['num'] + ret
+
+        """
         if len(viscuit) == 2:
             if viscuit[0]['sum'] >= 10 and viscuit[0]['sum'] > viscuit[1]['sum']:
                 num = num + 1
@@ -131,6 +164,7 @@ for mon in posts.months:
                 if row['clsp_chqid'] in chqs:
                     #CHQビスケットF数
                     chqs[row['clsp_chqid']]['num'] = chqs[row['clsp_chqid']]['num'] + 1
+        """
 
     #達成率の計算
     for k, v in chqs.items():
