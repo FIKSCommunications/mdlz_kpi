@@ -1,4 +1,4 @@
-#/usr/bin/python3
+#!/usr/bin/python3
 # coding: utf-8
 # 1 HZ占有率
 import cgi

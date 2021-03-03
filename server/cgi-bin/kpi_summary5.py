@@ -1,4 +1,4 @@
-#/usr/bin/python3
+#!/usr/bin/python3
 # coding: utf-8
 # 5 大陳数
 import sys
