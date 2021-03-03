@@ -1,4 +1,4 @@
-#!C:\Users\m-neishi\AppData\Local\Programs\Python\Python39\python.exe
+#/usr/bin/python3
 # coding: utf-8
 # 4 DP設置台数
 import sys
@@ -39,7 +39,8 @@ for mon in posts.months:
     shops = obj.getTargetShop(4, mon['startdtstr'], mon['clientid'], mon['startdtYearmonth'], mon['enddtYearmonth'])
 
     #サマリー初期値
-    targetSum = 11936  #ここはCSVから取得
+    targetSum = obj.getAllTargetNum(4, mon['month'], mon['clientid'], mon['year'])
+
     regi = 0
     num = 0
     result = 0

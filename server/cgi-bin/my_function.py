@@ -1,4 +1,4 @@
-#!C:\Users\m-neishi\AppData\Local\Programs\Python\Python39\python.exe
+#/usr/bin/python3
 # coding: utf-8
 import calendar
 from datetime import datetime, date, timedelta

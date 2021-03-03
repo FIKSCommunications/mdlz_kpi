@@ -1,4 +1,4 @@
-#!C:\Users\m-neishi\AppData\Local\Programs\Python\Python39\python.exe
+#/usr/bin/python3
 # coding: utf-8
 import MySQLdb
 from MySQLdb.cursors import DictCursor
@@ -10,7 +10,7 @@ class dbAccessor:
             user='root',
             passwd='admin',
             host='localhost',
-            db='ddss_new_origin',
+            db='ddss_new',
             use_unicode=True,
             charset="utf8"
         )
@@ -34,6 +34,18 @@ class dbAccessor:
         for row in rows:
             chqs[row['ktv_chqid']] = dict(row)
         return chqs
+
+    #全体ターゲット数値取得
+    def getAllTargetNum(self, qno, month, clientid, year):
+        sql = 'SELECT ktav_month%s as `all` FROM m_kpi_target_all_value val '\
+                'WHERE ktav_delete = 0  '\
+                'AND ktav_clientid = %s AND ktav_year = %s AND ktav_qno = %s'
+        rows = self.execQuery(sql, [month, clientid, year, qno])
+        #タプル=>辞書型に変換
+        res = 0
+        for row in rows:
+            res = row['all']
+        return res
 
     #ターゲット店舗取得
     def getTargetShop(self, qno, startdtstr, clientid, startYearmonth, endYearmonth):

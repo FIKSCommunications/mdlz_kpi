@@ -1,4 +1,4 @@
-#!C:\Users\m-neishi\AppData\Local\Programs\Python\Python39\python.exe
+#/usr/bin/python3
 # coding: utf-8
 # 1 HZ占有率
 import sys
@@ -30,7 +30,8 @@ for mon in posts.months:
     shops = obj.getTargetShop(3, mon['startdtstr'], mon['clientid'], mon['startdtYearmonth'], mon['enddtYearmonth'])
 
     #サマリー初期値
-    targetSum = 4111  #ここはCSVから取得
+    targetSum = obj.getAllTargetNum(3, mon['month'], mon['clientid'], mon['year'])
+
     num = 0
     rate = 0
 
