@@ -1,123 +1,209 @@
 #!/usr/bin/python3
 # coding: utf-8
-# 1 HZ占有率
-import cgi
+# 6 インプロ金額
 import sys
-from datetime import datetime, date, timedelta
-import calendar
 import json
-import pprint
 from dbAccessor import dbAccessor
+from inputParser import inputParser
+from my_function import h, e, int2
+import xml.etree.ElementTree as ET
+#import xmltodict
 
-form = cgi.FieldStorage()
+# post値取得 startdt:'2021-02' enddt:'2021-02' clientid:162 months:['2021-01', '2021-02']
+# [{
+#   month:1,
+#   startdtstr:'2021-01-01',
+#   enddtstr:'2021-01-31',
+#   clientid:162,
+#   year:2021,
+#   startdtYearmonth:'202101',
+#   enddtYearmonth:'202101'
+# }]
+posts = inputParser()
 
-#月の最終日を求める
-def get_last_date2(year, month):
-    return date(year, month, calendar.monthrange(year, month)[1])
-
-#引数
-#clientid
-clientid = 162
-#開始日、終了日
-startdt = '202101'
-enddt = '202101'
-
-#開始日終了日の取得
-today = datetime.today()
-todaystr = datetime.strftime(today, '%Y-%m-%d')
-todayYearmonth = datetime.strftime(today, '%Y%m')
-yesterday = today - timedelta(days=1)
-yesterdaystr = datetime.strftime(yesterday, '%Y-%m-%d')
-yearmonth = datetime.strftime(yesterday, '%Y%m')
-
-#開始日
-startdtstr = startdt[0:4] + '-' + startdt[4:6] + '-01'
-
-#終了日
-if todayYearmonth == enddt:
-    enddtstr = yesterdaystr
-else:
-    enddtstr = str(get_last_date2(int(enddt[0:4]), int(enddt[4:6])))
-
-#開始年、開始月
-year = startdt[0:4]
-month = int(startdt[4:6])
-
-
-#ターゲット数値取得
-sql = 'SELECT ktv_chqid, clcq_name as chqname, ktv_month%s as target, 0 as regi, 0 as kyoten FROM m_kpi_target_value val '\
-        'INNER JOIN t_client_chq ON ktv_chqid = clcq_chqid AND ktv_clientid = clcq_clientid '\
-        'WHERE ktv_delete = 0 AND clcq_delete = 0 '\
-        'AND clcq_term_1 <= %s AND clcq_term_2 >= %s '\
-        'AND ktv_clientid = %s AND ktv_year = %s AND ktv_qno = 1'
+# DBaccsess
 obj = dbAccessor()
-rows = obj.execQuery(sql, [month, startdtstr, startdtstr, clientid, year])
-#タプル=>辞書型に変換
-chqs = {}
-for row in rows:
-    chqs[row['ktv_chqid']] = dict(row)
+
+#複数月合計用
+gTargetSum = 0
+gRegi = 0
+gNum = 0
+gResult = 0
+gRate = 0
+gChqs = {}
+
+for mon in posts.months:
 
 
-#ターゲット店舗取得
-sql = 'SELECT kts_shopid, clsp_chqid FROM m_kpi_target_shop kpi '\
-        'INNER JOIN t_client_shop shop ON kts_shopid = clsp_shopid AND kts_clientid = clsp_clientid '\
-        'WHERE kts_delete = 0 AND clsp_delete = 0 '\
-        'AND clsp_term_1 <= %s AND clsp_term_2 >= %s '\
-        'AND kts_clientid = %s AND kts_yearmonth >= %s AND kts_yearmonth <= %s '\
-        'AND kts_question1 = 1 ORDER BY clsp_chqid ASC'
-shops = obj.execQuery(sql, [startdtstr, startdtstr, clientid, startdt, enddt])
+    #print(mon)
 
-regi = 0
-kyoten = 0
+    #ターゲット数値取得
+    chqs = obj.getTargetNum(6, mon['month'], mon['startdtstr'], mon['clientid'], mon['year'])
 
-for row in shops:
-    #KPI質問1　回答:レジ台数
-    sql = 'SELECT kpa_col1 FROM t_report report '\
-        'INNER JOIN t_kpi_answer kpa ON kpa.kpa_reportid = report.reportid '\
-        'AND kpa.kpa_none = 0 AND kpa.kpa_delete = 0 '\
-        'INNER JOIN t_kpi_question kpq ON kpq.kpq_kpiid = report.rp_kpiid '\
-        'AND kpq.kpq_delete = 0 AND kpq.kpq_disporder = 1 '\
-        'INNER JOIN t_kpi_row kpr ON kpr.kpr_kpiid = report.rp_kpiid '\
-        'AND kpr.kpr_delete = 0 AND kpr.kpr_disporder = 1 '\
-        'WHERE rp_delete = 0 AND rp_done = 1 '\
-        'AND kpq.kpqid = kpa.kpa_kpqid AND kpr.kprid = kpa.kpa_kprid '\
-        'AND rp_clientid = %s AND rp_shopid = %s AND rp_date <= %s '\
-        'AND rp_date >= %s ORDER BY rp_date DESC LIMIT 1'
-    rows2 = obj.execQuery(sql, [clientid, row['kts_shopid'], enddtstr, startdtstr])
-    if len(rows2) > 0:
-        regi = regi + int(rows2[0]['kpa_col1'])
-        if row['clsp_chqid'] in chqs:
-            chqs[row['clsp_chqid']]['regi'] = chqs[row['clsp_chqid']]['regi'] + int(rows2[0]['kpa_col1'])
+    #ターゲット店舗取得
+    shops = obj.getTargetShop(6, mon['startdtstr'], mon['clientid'], mon['startdtYearmonth'], mon['enddtYearmonth'])
 
-    #KPI質問2　回答:MDLZ製品（ガム、キャンディ、タブ）がある
-    sql = 'SELECT kpa_col1 FROM t_report report '\
-        'INNER JOIN t_kpi_answer kpa ON kpa.kpa_reportid = report.reportid '\
-        'AND kpa.kpa_none = 0 AND kpa.kpa_delete = 0 '\
-        'INNER JOIN t_kpi_question kpq ON kpq.kpq_kpiid = report.rp_kpiid '\
-        'AND kpq.kpq_delete = 0 AND kpq.kpq_disporder = 2 '\
-        'INNER JOIN t_kpi_row kpr ON kpr.kpr_kpiid = report.rp_kpiid '\
-        'AND kpr.kpr_delete = 0 AND kpr.kpr_disporder = 1 '\
-        'WHERE rp_delete = 0 AND rp_done = 1 '\
-        'AND kpq.kpqid = kpa.kpa_kpqid AND kpr.kprid = kpa.kpa_kprid '\
-        'AND rp_clientid = %s AND rp_shopid = %s AND rp_date <= %s '\
-        'AND rp_date >= %s ORDER BY rp_date DESC LIMIT 1'
-    rows2 = obj.execQuery(sql, [clientid, row['kts_shopid'], enddtstr, startdtstr])
-    if len(rows2) > 0:
-        kyoten = kyoten + int(rows2[0]['kpa_col1'])
-        if row['clsp_chqid'] in chqs:
-            chqs[row['clsp_chqid']]['kyoten'] = chqs[row['clsp_chqid']]['kyoten'] + int(rows2[0]['kpa_col1'])
+    #サマリー初期値
+    targetSum = 55697537  #ここはCSVから取得
+    regi = 0
+    num = 0
+    result = 0
+    rate = 0
 
-#result = 0
-#if regi > 0:
-#    result = kyoten / regi * 100
-#    result = round(result, 2)
 
-#params = {"regi":regi, "kyoten":kyoten, "result":result}
-json_str = json.dumps(chqs, indent=2)
+    #ターゲット店舗毎に集計
+    for row in shops:
+
+        #KPI質問1　回答:レジ台数
+        sql = 'SELECT countid, ct_xml, cta_xml FROM t_report report '\
+            'INNER JOIN t_count_ans cta ON cta.cta_reportid = report.reportid '\
+            'AND cta.cta_delete = 0 '\
+            'INNER JOIN t_count ct ON ct.countid = report.rp_countid '\
+            'AND ct.ct_delete = 0 '\
+            'WHERE rp_delete = 0 AND rp_done = 1 '\
+            'AND rp_clientid = %s AND rp_shopid = %s AND rp_date <= %s '\
+            'AND rp_date >= %s ORDER BY rp_date DESC LIMIT 1'
+        rows2 = obj.execQuery(sql, [mon['clientid'], row['kts_shopid'], mon['enddtstr'], mon['startdtstr']])
+
+        if len(rows2) > 0:
+            # xml解析
+            '''
+            print(rows2[0]['countid'])
+            ct_dict = xmltodict.parse(rows2[0]['ct_xml'],force_list=('PRODUCT'))
+            cta_dict = xmltodict.parse(rows2[0]['cta_xml'],force_list=('PRODUCT'))
+            for countans in cta_dict['CTA_XML']['PRODUCT']:
+                for qans in countans['QUESTION']:
+                    if qans['NO'] == '5':
+                        print('www')
+                        print(qans['ANS'])
+                        break
+
+            result = {}
+            for product in ct_dict['CT_XML']['PRODUCT']:
+                print(product['NAME'])
+                print(product['NO'])
+            '''
+
+            ct_root = ET.fromstring(rows2[0]['ct_xml'])
+            cta_root = ET.fromstring(rows2[0]['cta_xml'])
+
+            #元となる商品辞書作成
+            product_dict = {}
+            qno = -1
+            for i, product in enumerate(ct_root):
+                product_name = product.find('NAME').text
+                product_no = int(product.find('NO').text)
+                product_dict[product_no] = {'PNAME':product_name, 'PNO':product_no, 'RESULT':0}
+
+                if i == 0:
+                    for question in product.findall('QUESTION'):
+                        if question.find('TITLE').text == 'インプロ%R%Ball数':
+                            qno = int(question.find('NO').text)
+
+            #print(qno)
+
+            for i, product in enumerate(cta_root):
+                result = 0
+                pno = int(product.find('NO').text)
+                #print(pno)
+                for answer in product.findall('QUESTION'):
+                    if qno == int(answer.find('NO').text) and answer.find('ANS').text is not None:
+                        if answer.find('ANS').text.isdecimal():
+                            print('www')
+                            result = int(answer.find('ANS').text)
+                            print(pno)
+                            product_dict[pno]['RESULT'] = product_dict[pno]['RESULT'] + result
+
+            #print(product_dict)
+            sys.exit()
+
+
+
+
+            dict_q = {}
+            for child in ct_root:
+                pname = child.find('NAME').text
+                pno = child.find('NO').text
+                dict_q[pname] = pno
+
+                questions = child.findall('.//TITLE')
+                questionNos = child.findall('.//NO')
+                for i, question in enumerate(questions):
+                    if question.text == 'インプロ%R%Ball数':
+                        print(questionNos[i+1].text)
+                        break
+            
+            for child in cta_root:
+                products = child.findall('./QUESTION')
+
+
+
+            #サマリーレジ台数
+            regi = regi + int2(rows2[0]['kpa_col1'])
+
+            if row['clsp_chqid'] in chqs:
+                #CHQレジ台数
+                chqs[row['clsp_chqid']]['regi'] = chqs[row['clsp_chqid']]['regi'] + int2(rows2[0]['kpa_col1'])
+
+        #KPI質問2　回答:MDLZ製品（ガム、キャンディ、タブ）がある
+        sql = 'SELECT kpa_col1 FROM t_report report '\
+            'INNER JOIN t_kpi_answer kpa ON kpa.kpa_reportid = report.reportid '\
+            'AND kpa.kpa_none = 0 AND kpa.kpa_delete = 0 '\
+            'INNER JOIN t_kpi_question kpq ON kpq.kpq_kpiid = report.rp_kpiid '\
+            'AND kpq.kpq_delete = 0 AND kpq.kpq_disporder = 2 '\
+            'INNER JOIN t_kpi_row kpr ON kpr.kpr_kpiid = report.rp_kpiid '\
+            'AND kpr.kpr_delete = 0 AND kpr.kpr_disporder = 1 '\
+            'WHERE rp_delete = 0 AND rp_done = 1 '\
+            'AND kpq.kpqid = kpa.kpa_kpqid AND kpr.kprid = kpa.kpa_kprid '\
+            'AND rp_clientid = %s AND rp_shopid = %s AND rp_date <= %s '\
+            'AND rp_date >= %s ORDER BY rp_date DESC LIMIT 1'
+        rows2 = obj.execQuery(sql, [mon['clientid'], row['kts_shopid'], mon['enddtstr'], mon['startdtstr']])
+
+        if len(rows2) > 0:
+            #サマリー拠点数
+            num = num + int2(rows2[0]['kpa_col1'])
+
+            if row['clsp_chqid'] in chqs:
+                #CHQ拠点数
+                chqs[row['clsp_chqid']]['num'] = chqs[row['clsp_chqid']]['num'] + int2(rows2[0]['kpa_col1'])
+
+        #shop毎ここまで
+
+    #chqs カバレッジ、達成率の計算
+    for k, v in chqs.items():
+        if k in gChqs:
+            gChqs[k]['regi'] += v['regi']
+            gChqs[k]['num'] += v['num']
+        else:
+            gChqs[k] = v
+
+    gTargetSum += targetSum
+    gRegi += regi
+    gNum += num
+
+    #月ループ　ここまで
+
+
+#月を含めた全集計
+gTargetSum = gTargetSum / len(posts.months)
+if gRegi > 0:
+    gResult = round(gNum / gRegi * 100, 2)
+if gTargetSum > 0:
+    gRate = round(gResult / gTargetSum * 100, 2)
+
+#chq別のカバレッジ、達成率
+gChqs = list(gChqs.values())
+
+for gchq in gChqs:
+    if gchq['regi'] > 0:
+        gchq['cavarege'] = round(gchq['num'] / gchq['regi'] * 100, 2)
+    if gchq['all'] > 0:
+        gchq['rate'] = round(gchq['cavarege'] / gchq['all'] * 100, 2)
+
+#サマリーもJSONに含める
+summary = {'all':gTargetSum, 'regi':gRegi, 'num':gNum, 'cavarege':gResult, 'rate':gRate}
+response = {'summary': summary, 'detail': gChqs}
+json_str = json.dumps(response, indent=2)
 
 # json出力
-print('Status: 200 OK')
-print('Content-Type: text/html\nAccess-Control-Allow-Origin: *\n')
-print('\n\n')
-print(json_str)
-print('\n')
+h(json_str)
