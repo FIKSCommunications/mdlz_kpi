@@ -10,7 +10,7 @@ class dbAccessor:
             user='root',
             passwd='admin',
             host='localhost',
-            db='ddss_new',
+            db='ddss_new_origin',
             use_unicode=True,
             charset="utf8"
         )
