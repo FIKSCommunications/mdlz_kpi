@@ -56,6 +56,13 @@ class dbAccessor:
                 'AND kts_clientid = %s AND kts_yearmonth >= %s AND kts_yearmonth <= %s '\
                 'AND kts_question%s = 1 ORDER BY clsp_chqid ASC'
         return self.execQuery(sql, [startdtstr, startdtstr, clientid, startYearmonth, endYearmonth, qno])
+    
+    #ターゲット商品取得
+    def getTargetItem(self, clientid, date):
+        sql = 'SELECT ktp_product, ktp_kechakune * ktp_quantity_per_box as price FROM m_kpi_target_product kpi '\
+                'WHERE ktp_delete = 0 AND ktp_clientid = %s AND ktp_term_1 <= %s AND ktp_term_2 >= %s '\
+                'ORDER BY ktpid ASC'
+        return self.execQuery(sql, [clientid, date, date])
 
 
     def __del__(self):

@@ -24,6 +24,8 @@ obj = dbAccessor()
 
 #複数月合計用
 gTargetSum = 0
+gTargetRegi = 0
+gTargetKyoten = 0
 gRegi = 0
 gNum = 0
 gResult = 0
@@ -41,7 +43,8 @@ for mon in posts.months:
     shops = obj.getTargetShop(1, mon['startdtstr'], mon['clientid'], mon['startdtYearmonth'], mon['enddtYearmonth'])
 
     #サマリー初期値
-    targetSum = obj.getAllTargetNum(1, mon['month'], mon['clientid'], mon['year'])
+    targetRegi = obj.getAllTargetNum(0, mon['month'], mon['clientid'], mon['year'])
+    targetKyoten = obj.getAllTargetNum(1, mon['month'], mon['clientid'], mon['year'])
 
     regi = 0
     num = 0
@@ -105,15 +108,24 @@ for mon in posts.months:
         else:
             gChqs[k] = v
 
-    gTargetSum += targetSum
+    #gTargetSum += targetSum
     gRegi += regi
     gNum += num
+
+    # 月のレジ台数、拠点数の累計
+    gTargetRegi = gTargetRegi + targetRegi
+    gTargetKyoten = gTargetKyoten + targetKyoten
 
     #月ループ　ここまで
 
 
 #月を含めた全集計
-gTargetSum = gTargetSum / len(posts.months)
+
+#全企業ターゲット占有率
+if gTargetRegi > 0:
+    gTargetSum = round(gTargetKyoten / gTargetRegi * 100, 2)
+
+#gTargetSum = gTargetSum / len(posts.months)
 if gRegi > 0:
     gResult = round(gNum / gRegi * 100, 2)
 if gTargetSum > 0:
