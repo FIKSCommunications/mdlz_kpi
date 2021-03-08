@@ -33,11 +33,11 @@
                     </thead>
                     <tbody>
                       <tr>
-                        <td>{{ all }}</td>
-                        <td v-show="regi!='none'">{{ regi }}</td>
-                        <td>{{ num }}</td>
-                        <td v-show="cavarege!='none'">{{ cavarege }}</td>
-                        <td>{{ rate }}%</td>
+                        <td>{{ all | addComma }}</td>
+                        <td v-if="regi!='none'">{{ regi | addComma }}</td>
+                        <td>{{ num | addComma }}</td>
+                        <td v-if="cavarege!='none'">{{ cavarege | orgRound(10) }}%</td>
+                        <td>{{ rate | addComma }}%</td>
                       </tr>
                     </tbody>
                   </template>
@@ -83,11 +83,11 @@
                 <tbody>
                   <tr v-for="(data, index) in detalData" :key="index">
                     <td>{{data.chq}}</td>
-                    <td>{{ data.all }}</td>
-                    <td v-show="regi!='none'">{{ data.regi }}</td>
-                    <td>{{ data.num }}</td>
-                    <td v-show="cavarege!='none'">{{ data.cavarege }}</td>
-                    <td>{{ data.rate }}%</td>
+                    <td>{{ data.all | addComma }}</td>
+                    <td v-if="regi!='none'">{{ data.regi | addComma }}</td>
+                    <td>{{ data.num | addComma }}</td>
+                    <td v-if="cavarege!='none'">{{ data.cavarege | orgRound(10) }}%</td>
+                    <td>{{ data.rate | addComma }}%</td>
                   </tr>
                 </tbody>
               </template>
@@ -126,6 +126,14 @@ export default {
         this.viewFlg = true;
       }
     },
+  },
+  filters:{
+    addComma: function(value) {
+      return value.toLocaleString();
+    },
+    orgRound: function(value, base) {
+      return Math.round(value * base) / base;
+    }
   },
   props:[
     'title',
