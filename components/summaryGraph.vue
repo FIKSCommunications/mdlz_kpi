@@ -37,7 +37,7 @@
                         <td v-if="regi!='none'">{{ regi | addComma }}</td>
                         <td>{{ num | addComma }}</td>
                         <td v-if="cavarege!='none'">{{ cavarege | orgRound(10) }}%</td>
-                        <td>{{ rate | addComma }}%</td>
+                        <td>{{ rate | orgRound(10) }}%</td>
                       </tr>
                     </tbody>
                   </template>
@@ -87,7 +87,7 @@
                     <td v-if="regi!='none'">{{ data.regi | addComma }}</td>
                     <td>{{ data.num | addComma }}</td>
                     <td v-if="cavarege!='none'">{{ data.cavarege | orgRound(10) }}%</td>
-                    <td>{{ data.rate | addComma }}%</td>
+                    <td>{{ data.rate | orgRound(10) }}%</td>
                   </tr>
                 </tbody>
               </template>
@@ -129,9 +129,13 @@ export default {
   },
   filters:{
     addComma: function(value) {
-      return value.toLocaleString();
+      if (! value) return value;
+      let formatter = new Intl.NumberFormat('ja-JP')
+      return formatter.format(value)
+      //return value.toLocaleString();
     },
     orgRound: function(value, base) {
+      if (! value) return value;
       return Math.round(value * base) / base;
     }
   },
