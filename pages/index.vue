@@ -227,6 +227,7 @@ export default {
       this.calcSdAllGetData() ;
       this.calcDpGetData();
       this.calcDisplayGetData();
+      //6は未完成のため除く
       //this.calcInproGetData();
     },
     // 1.HZ占有率
