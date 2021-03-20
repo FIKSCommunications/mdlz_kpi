@@ -217,13 +217,17 @@ export default {
   },
   methods:{
     clickAggregate(){
+      if (this.startDt > this.endDt) {
+        alert('日付が不正です');
+        return false;
+      }
       this.viewFlgSummary = true;
       this.calcHzGetData();
       this.calcHzAllGetData();
       this.calcSdAllGetData() ;
       this.calcDpGetData();
       this.calcDisplayGetData();
-      this.calcInproGetData();
+      //this.calcInproGetData();
     },
     // 1.HZ占有率
     calcHzGetData(){
