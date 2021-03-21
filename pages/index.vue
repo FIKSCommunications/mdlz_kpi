@@ -119,7 +119,7 @@
         </summaryGraph>
       </v-col>
     </v-row>
-    <v-row justify="center" align="center" v-show="viewFlgSummary">
+    <!--v-row justify="center" align="center" v-show="viewFlgSummary">
       <v-col cols="8">
         <summaryGraph
         :title="inproData.title"
@@ -134,7 +134,7 @@
         >
         </summaryGraph>
       </v-col>
-    </v-row>
+    </v-row-->
   </div>
 </template>
 
@@ -217,17 +217,23 @@ export default {
   },
   methods:{
     clickAggregate(){
+      if (this.startDt > this.endDt) {
+        alert('日付が不正です');
+        return false;
+      }
       this.viewFlgSummary = true;
       this.calcHzGetData();
       this.calcHzAllGetData();
       this.calcSdAllGetData() ;
       this.calcDpGetData();
       this.calcDisplayGetData();
+      //6は未完成のため除く
+      //this.calcInproGetData();
     },
     // 1.HZ占有率
     calcHzGetData(){
       this.hzGetData.loading = true;
-
+      //let url = 'http://localhost:8080/cgi-bin/kpi_summary1.py';
       let url = 'server/cgi-bin/kpi_summary1.py';
       const response = axios.get(url, {
         params: {
@@ -254,6 +260,8 @@ export default {
     // HZ総拠点数
     calcHzAllGetData(){      
       this.hzAllData.loading = true;
+
+      //let url = 'http://localhost:8080/cgi-bin/kpi_summary2.py';
       let url = 'server/cgi-bin/kpi_summary2.py';
       const response = axios.get(url, {
         params: {
@@ -279,7 +287,8 @@ export default {
     // 3.SD総拠点数
     calcSdAllGetData(){
       this.sdAllData.loading = true;
-      console.log('axios!')
+
+      //let url = 'http://localhost:8080/cgi-bin/kpi_summary3.py';
       let url = 'server/cgi-bin/kpi_summary3.py';
       const response = axios.get(url, {
         params: {
@@ -289,7 +298,7 @@ export default {
         }
       })
       .then(function(response){
-        console.log('exec!')
+        console.log('exec SD ALL!')
         console.log(response.data);
         this.sdAllData.all = response.data.summary.all;
         this.sdAllData.num = response.data.summary.num;
@@ -307,6 +316,7 @@ export default {
     calcDpGetData(){
       this.dpData.loading = true;
 
+      //let url = 'http://localhost:8080/cgi-bin/kpi_summary4.py';
       let url = 'server/cgi-bin/kpi_summary4.py';
       const response = axios.get(url, {
         params: {
@@ -335,6 +345,7 @@ export default {
     calcDisplayGetData(){
       this.displayData.loading = true;
 
+      //let url = 'http://localhost:8080/cgi-bin/kpi_summary5.py';
       let url = 'server/cgi-bin/kpi_summary5.py';
       const response = axios.get(url, {
         params: {
@@ -358,9 +369,11 @@ export default {
         this.displayData.loading = false;        
       }.bind(this));
     },
-    // インプロ金額
+    // 6.インプロ金額
     calcInproGetData(){
-      console.log('axios!')
+      this.inproData.loading = true;
+
+      //let url = 'http://localhost:8080/cgi-bin/kpi_summary6.py';
       let url = 'server/cgi-bin/kpi_summary6.py';
       const response = axios.get(url, {
         params: {
@@ -370,11 +383,12 @@ export default {
         }
       })
       .then(function(response){
-        console.log('exec!')
+        console.log('exec Inpro!')
         console.log(response.data);
-        this.inproData.all = response.data.regi;
-        this.inproData.num = response.data.kyoten;
-        this.inproData.rate = response.data.result;
+        this.inproData.all = response.data.summary.all;
+        this.inproData.num = response.data.summary.num;
+        this.inproData.rate = response.data.summary.rate;
+        this.inproData.detail = response.data.detail;
       }.bind(this))
       .catch(function(error){
         console.log(error);
