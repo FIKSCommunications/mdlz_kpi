@@ -37,6 +37,7 @@
       <v-btn
       　text
         primary
+        href="https://fiksdds.com/ddss_new/top/top.php"
       >DDSへ戻る</v-btn>
     </v-app-bar>
     <v-main>

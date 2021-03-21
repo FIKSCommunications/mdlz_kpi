@@ -228,7 +228,7 @@ export default {
     calcHzGetData(){
       this.hzGetData.loading = true;
 
-      let url = 'http://localhost:8080/cgi-bin/kpi_summary1.py';
+      let url = 'server/cgi-bin/kpi_summary1.py';
       const response = axios.get(url, {
         params: {
           'startdt': this.startDt,
@@ -254,7 +254,7 @@ export default {
     // HZ総拠点数
     calcHzAllGetData(){      
       this.hzAllData.loading = true;
-      let url = 'http://localhost:8080/cgi-bin/kpi_summary2.py';
+      let url = 'server/cgi-bin/kpi_summary2.py';
       const response = axios.get(url, {
         params: {
           'startdt': this.startDt,
@@ -280,7 +280,7 @@ export default {
     calcSdAllGetData(){
       this.sdAllData.loading = true;
       console.log('axios!')
-      let url = 'http://localhost:8080/cgi-bin/kpi_summary3.py';
+      let url = 'server/cgi-bin/kpi_summary3.py';
       const response = axios.get(url, {
         params: {
           'startdt': this.startDt,
@@ -307,7 +307,7 @@ export default {
     calcDpGetData(){
       this.dpData.loading = true;
 
-      let url = 'http://localhost:8080/cgi-bin/kpi_summary4.py';
+      let url = 'server/cgi-bin/kpi_summary4.py';
       const response = axios.get(url, {
         params: {
           'startdt': this.startDt,
@@ -335,7 +335,7 @@ export default {
     calcDisplayGetData(){
       this.displayData.loading = true;
 
-      let url = 'http://localhost:8080/cgi-bin/kpi_summary5.py';
+      let url = 'server/cgi-bin/kpi_summary5.py';
       const response = axios.get(url, {
         params: {
           'startdt': this.startDt,
@@ -361,7 +361,7 @@ export default {
     // インプロ金額
     calcInproGetData(){
       console.log('axios!')
-      let url = 'http://localhost:8080/cgi-bin/kpi_summary6.py';
+      let url = 'server/cgi-bin/kpi_summary6.py';
       const response = axios.get(url, {
         params: {
           'startdt': this.startDt,
