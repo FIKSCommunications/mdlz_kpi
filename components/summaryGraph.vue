@@ -33,7 +33,7 @@
                     </thead>
                     <tbody>
                       <tr>
-                        <td>{{ all | addComma }}</td>
+                        <td>{{ all | addComma }}<span v-if="regi!='none'">%</span></td>
                         <td v-if="regi!='none'">{{ regi | addComma }}</td>
                         <td>{{ num | addComma }}</td>
                         <td v-if="cavarege!='none'">{{ cavarege | orgRound(10) }}%</td>
@@ -46,7 +46,7 @@
             </v-col>
           </v-row>
           <v-row justify="end" align="center">
-            <v-col cols="4">
+            <v-col cols="6">
               <v-btn 
               color="primary" 
               rounded 
@@ -57,6 +57,17 @@
               >
               <v-icon x-small>{{viewFlg==false?'mdi-plus':'mdi-minus'}}</v-icon>
               {{viewFlg==false?'詳細':'詳細非表示'}}</v-btn>
+            </v-col>
+            <v-col cols="6" align="end">
+              <v-btn 
+              color="primary" 
+              rounded 
+              small  
+              text
+              class="text-decoration-underline"
+              @click="downloadCSV"
+              >
+              ダウンロード</v-btn>
             </v-col>
           </v-row>
         </v-col>
@@ -83,7 +94,7 @@
                 <tbody>
                   <tr v-for="(data, index) in detalData" :key="index">
                     <td>{{data.chq}}</td>
-                    <td>{{ data.all | addComma }}</td>
+                    <td>{{ data.all | addComma }}<span v-if="regi!='none'">%</span></td>
                     <td v-if="regi!='none'">{{ data.regi | addComma }}</td>
                     <td>{{ data.num | addComma }}</td>
                     <td v-if="cavarege!='none'">{{ data.cavarege | orgRound(10) }}%</td>
@@ -126,6 +137,39 @@ export default {
         this.viewFlg = true;
       }
     },
+    downloadCSV:function(){
+      //let csv = '\ufeff' + '企業,';
+
+      //全体
+      let head = '\ufeff';
+      this.cols.forEach(el => {
+        head += el + ',';
+      });      
+      head = head.slice(0, -1) + '\n';
+      let csv = head;
+      if (this.regi != 'none') {
+        csv += this.all +','+ this.regi +','+ this.num +','+  Math.round(this.cavarege*10)/10 +','+  Math.round(this.rate*10)/10 + '\n\n';
+      } else {
+        csv += this.all +','+ this.num +','+  Math.round(this.rate*10)/10 + '\n\n';
+      }
+
+      //企業別
+      csv += '企業,' + head;
+      this.detalData.forEach(el => {
+        let line = '';
+        if (this.regi != 'none') {
+          line = '"' + el['chq'] +'",'+ el['all'] +','+ el['regi'] +','+ el['num'] +','+  Math.round(el['cavarege']*10)/10 +','+  Math.round(el['rate']*10)/10 + '\n';
+        } else {
+          line = '"' + el['chq'] +'",'+ el['all'] +','+ el['num'] +','+  Math.round(el['rate']*10)/10 + '\n';
+        }
+        csv += line;
+      })
+      let blob = new Blob([csv], { type: 'text/csv' })
+      let link = document.createElement('a')
+      link.href = window.URL.createObjectURL(blob)
+      link.download = this.title + '.csv';
+      link.click()      
+    },
   },
   filters:{
     addComma: function(value) {
@@ -137,6 +181,9 @@ export default {
     orgRound: function(value, base) {
       if (! value) return value;
       return Math.round(value * base) / base;
+    },
+    addPercent: function(value) {
+      return value + '%';
     }
   },
   props:[
