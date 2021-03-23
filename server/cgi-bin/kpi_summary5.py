@@ -5,16 +5,18 @@ import sys
 import json
 from dbAccessor import dbAccessor
 from inputParser import inputParser
-from my_function import h, e
+from my_function import h, e, int2
 
 def displayCalc(lists):
     ret = 0
     pre = 0
     for i in lists:
-        if i >= 10 and i > pre:
+        num = int2(i)
+        if num >= 10 and num > pre:
             ret += 1
-        pre = i
+        pre = num
     return ret
+        
  
 # post値取得 startdt:'2021-02' enddt:'2021-02' clientid:162 months:['2021-01', '2021-02']
 # [{
@@ -58,7 +60,7 @@ for mon in posts.months:
     #ターゲット店舗毎に集計
     for row in shops:
         #KPI質問6 ガムF数
-        sql = 'SELECT kpa_col1 + kpa_col2 as sum FROM t_report report '\
+        sql = 'SELECT kpa_col1,kpa_col2 FROM t_report report '\
             'INNER JOIN t_kpi_answer kpa ON kpa.kpa_reportid = report.reportid '\
             'AND kpa.kpa_none = 0 AND kpa.kpa_delete = 0 '\
             'INNER JOIN t_kpi_question kpq ON kpq.kpq_kpiid = report.rp_kpiid '\
@@ -71,8 +73,15 @@ for mon in posts.months:
             'AND rp_date >= %s ORDER BY rp_date ASC'
         gum = obj.execQuery(sql, [mon['clientid'], row['kts_shopid'], mon['enddtstr'], mon['startdtstr']])
 
-        lists = [d.get('sum') for d in gum]
-        ret = displayCalc(lists)
+        listsHZ = [d.get('kpa_col1') for d in gum]
+        ret = displayCalc(listsHZ)
+        num = num + ret
+        if row['clsp_chqid'] in chqs:
+            #CHQガムF数
+            chqs[row['clsp_chqid']]['num'] = chqs[row['clsp_chqid']]['num'] + ret
+
+        listsSD = [d.get('kpa_col2') for d in gum]
+        ret = displayCalc(listsSD)
         num = num + ret
         if row['clsp_chqid'] in chqs:
             #CHQガムF数
@@ -94,7 +103,7 @@ for mon in posts.months:
         """        
 
         #KPI質問6 キャンディタブF数
-        sql = 'SELECT kpa_col1 + kpa_col2 as sum FROM t_report report '\
+        sql = 'SELECT kpa_col1, kpa_col2 FROM t_report report '\
             'INNER JOIN t_kpi_answer kpa ON kpa.kpa_reportid = report.reportid '\
             'AND kpa.kpa_none = 0 AND kpa.kpa_delete = 0 '\
             'INNER JOIN t_kpi_question kpq ON kpq.kpq_kpiid = report.rp_kpiid '\
@@ -107,8 +116,15 @@ for mon in posts.months:
             'AND rp_date >= %s ORDER BY rp_date ASC'
         candy = obj.execQuery(sql, [mon['clientid'], row['kts_shopid'], mon['enddtstr'], mon['startdtstr']])
 
-        lists = [d.get('sum') for d in candy]
-        ret = displayCalc(lists)
+        listsHZ = [d.get('kpa_col1') for d in candy]
+        ret = displayCalc(listsHZ)
+        num = num + ret
+        if row['clsp_chqid'] in chqs:
+            #CHQキャンディF数
+            chqs[row['clsp_chqid']]['num'] = chqs[row['clsp_chqid']]['num'] + ret
+
+        listsSD = [d.get('kpa_col2') for d in candy]
+        ret = displayCalc(listsSD)
         num = num + ret
         if row['clsp_chqid'] in chqs:
             #CHQキャンディF数
@@ -132,7 +148,7 @@ for mon in posts.months:
 
 
         #KPI質問7 F数
-        sql = 'SELECT kpa_col1 + kpa_col2 as sum FROM t_report report '\
+        sql = 'SELECT kpa_col1, kpa_col2 FROM t_report report '\
             'INNER JOIN t_kpi_answer kpa ON kpa.kpa_reportid = report.reportid '\
             'AND kpa.kpa_none = 0 AND kpa.kpa_delete = 0 '\
             'INNER JOIN t_kpi_question kpq ON kpq.kpq_kpiid = report.rp_kpiid '\
@@ -145,8 +161,15 @@ for mon in posts.months:
             'AND rp_date >= %s ORDER BY rp_date ASC'
         viscuit = obj.execQuery(sql, [mon['clientid'], row['kts_shopid'], mon['enddtstr'], mon['startdtstr']])
 
-        lists = [d.get('sum') for d in viscuit]
-        ret = displayCalc(lists)
+        listsHZ = [d.get('kpa_col1') for d in viscuit]
+        ret = displayCalc(listsHZ)
+        num = num + ret
+        if row['clsp_chqid'] in chqs:
+            #CHQビスケットF数
+            chqs[row['clsp_chqid']]['num'] = chqs[row['clsp_chqid']]['num'] + ret
+
+        listsSD = [d.get('kpa_col2') for d in viscuit]
+        ret = displayCalc(listsSD)
         num = num + ret
         if row['clsp_chqid'] in chqs:
             #CHQビスケットF数
