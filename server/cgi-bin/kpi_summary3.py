@@ -37,7 +37,7 @@ for mon in posts.months:
 
     #ターゲット店舗毎に集計
     for row in shops:
-        #KPI質問2　回答:MDLZ製品（ガム、キャンディ、タブ）がある
+        #KPI質問3　回答:MDLZ製品（ガム、キャンディ、タブ）がある
         sql = 'SELECT kpa_col1 FROM t_report report '\
             'INNER JOIN t_kpi_answer kpa ON kpa.kpa_reportid = report.reportid '\
             'AND kpa.kpa_none = 0 AND kpa.kpa_delete = 0 '\
@@ -60,9 +60,11 @@ for mon in posts.months:
                 chqs[row['clsp_chqid']]['num'] = chqs[row['clsp_chqid']]['num'] + int(rows2[0]['kpa_col1'])
 
             #shop毎ここまで
+
     #chqs 達成率の計算
     for k, v in chqs.items():
         if k in gChqs:
+            gChqs[k]['all'] += v['all']
             gChqs[k]['num'] += v['num']
         else:
             gChqs[k] = v
@@ -71,9 +73,10 @@ for mon in posts.months:
     gNum += num
 
     #月ループ　ここまで
-    chqs = list(chqs.values())
+    #chqs = list(chqs.values())
+
 #月を含めた全集計
-gTargetSum = gTargetSum / len(posts.months)
+#gTargetSum = gTargetSum / len(posts.months)
 if gTargetSum > 0:
     gRate = round(gNum / gTargetSum * 100, 2)
 
@@ -86,7 +89,7 @@ for gchq in gChqs:
 
 #サマリーもJSONに含める
 summary = {'all':gTargetSum, 'num':gNum,  'rate':gRate}
-response = {'summary': summary, 'detail': chqs}
+response = {'summary': summary, 'detail': gChqs}
 
 json_str = json.dumps(response, indent=2)
 

@@ -27,7 +27,11 @@ def int2(num):
     if num.isdecimal():
         return int(num)
     else:
-        return 0
+        # 2.などドットを含む場合はドット以降を切り捨て
+        if num.find('.') > 0 and num[0:num.find('.')].isdecimal: 
+            return int(num[0:num.find('.')])
+        else:
+            return 0
 
 
 

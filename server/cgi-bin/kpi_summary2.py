@@ -58,10 +58,12 @@ for mon in posts.months:
                 #CHQ拠点数
                 chqs[row['clsp_chqid']]['num'] = chqs[row['clsp_chqid']]['num'] + int(rows2[0]['kpa_col1'])
 
-            #shop毎ここまで
+        #shop毎ここまで
+
     #chqs 達成率の計算
     for k, v in chqs.items():
         if k in gChqs:
+            gChqs[k]['all'] += v['all']
             gChqs[k]['num'] += v['num']
         else:
             gChqs[k] = v
@@ -70,9 +72,10 @@ for mon in posts.months:
     gNum += num
 
     #月ループ　ここまで
-    chqs = list(chqs.values())
+    #chqs = list(chqs.values())
+
 #月を含めた全集計
-gTargetSum = gTargetSum / len(posts.months)
+#gTargetSum = gTargetSum / len(posts.months)
 if gTargetSum > 0:
     gRate = round(gNum / gTargetSum * 100, 2)
 
@@ -85,7 +88,7 @@ for gchq in gChqs:
 
 #サマリーもJSONに含める
 summary = {'all':gTargetSum, 'num':gNum,  'rate':gRate}
-response = {'summary': summary, 'detail': chqs}
+response = {'summary': summary, 'detail': gChqs}
 
 json_str = json.dumps(response, indent=2)
 
