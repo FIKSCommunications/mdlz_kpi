@@ -27,12 +27,13 @@
                     <thead>
                       <tr>
                         <th v-for="(col, index) in cols" :key="index" class="text-left">
-                          {{col}}
+                          {{col.text}}
                         </th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
+                        <td>全体</td>
                         <td>{{ all | addComma }}<span v-if="regi!='none'">%</span></td>
                         <td v-if="regi!='none'">{{ regi | addComma }}</td>
                         <td>{{ num | addComma }}</td>
@@ -78,7 +79,31 @@
             color="white"
             elevation="2"
           >
-            <v-simple-table 
+            <v-data-table
+            :headers="cols"
+            :items="detalData"
+            disable-pagination
+            hide-default-footer
+            dense
+            :search="search"
+            >
+              <template v-slot:item.all="{ item }">
+                {{ item.all | addComma }}<span v-if="regi!='none'">%</span>
+              </template>
+              <template v-slot:item.regi="{ item }">
+                {{ item.regi | addComma }}
+              </template>
+              <template v-slot:item.num="{ item }">
+                {{ item.num | addComma }}
+              </template>
+              <template v-slot:item.cavarege="{ item }">
+                {{ item.cavarege | orgRound(10) }}%
+              </template>
+              <template v-slot:item.rate="{ item }">
+                {{ item.rate | orgRound(10) }}%
+              </template>
+            </v-data-table>
+            <!--v-simple-table 
             dense
             fixed-header
             >
@@ -102,7 +127,7 @@
                   </tr>
                 </tbody>
               </template>
-            </v-simple-table>
+            </v-simple-table-->
           </v-sheet>
         </v-col>
       </v-row>
@@ -117,16 +142,19 @@ export default {
       viewFlg : false,
       detalData : [],
       overlay: false,
+      search:'',
     }
   },
   watch:{
     detail: function(){
-      console.log('detail change');
       this.detalData = this.detail;
     },
     loading: function(){
-      console.log('loading change');
       this.overlay = this.loading;
+    },
+    psearch: function(){
+      this.search = this.psearch;
+      this.viewFlg = true;
     }
   },
   methods:{
@@ -143,18 +171,18 @@ export default {
       //全体
       let head = '\ufeff';
       this.cols.forEach(el => {
-        head += el + ',';
+        head += el.text + ',';
       });      
       head = head.slice(0, -1) + '\n';
       let csv = head;
       if (this.regi != 'none') {
-        csv += this.all +','+ this.regi +','+ this.num +','+  Math.round(this.cavarege*10)/10 +','+  Math.round(this.rate*10)/10 + '\n\n';
+        csv += '"全体",' + this.all +','+ this.regi +','+ this.num +','+  Math.round(this.cavarege*10)/10 +','+  Math.round(this.rate*10)/10 + '\n\n';
       } else {
-        csv += this.all +','+ this.num +','+  Math.round(this.rate*10)/10 + '\n\n';
+        csv += '"全体",' + this.all +','+ this.num +','+  Math.round(this.rate*10)/10 + '\n\n';
       }
 
       //企業別
-      csv += '企業,' + head;
+      csv += head;
       this.detalData.forEach(el => {
         let line = '';
         if (this.regi != 'none') {
@@ -196,6 +224,7 @@ export default {
     'cavarege',
     'detail',
     'loading',
+    'psearch',
   ]
 }
 </script>

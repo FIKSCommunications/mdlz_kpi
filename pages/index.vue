@@ -35,6 +35,16 @@
                 </v-btn>
               </v-col>
             </v-row>
+            <v-row v-show="viewFlgSummary">
+              <v-col>
+              <v-text-field
+                label="企業検索"
+                v-model="psearch"
+                outlined
+                dense
+              ></v-text-field>
+              </v-col>
+            </v-row>
           </v-card-text>
         </v-card>
       </v-col>
@@ -51,6 +61,7 @@
         :cavarege="hzGetData.cavarege"
         :detail="hzGetData.detail"
         :loading="hzGetData.loading"
+        :psearch="psearch"
         >
         </summaryGraph>
       </v-col>
@@ -67,6 +78,7 @@
         cavarege="none"
         :detail="hzAllData.detail"
         :loading="hzAllData.loading"
+        :psearch="psearch"
         >
         </summaryGraph>
       </v-col>
@@ -83,6 +95,7 @@
         cavarege="none"
         :detail="sdAllData.detail"
         :loading="sdAllData.loading"
+        :psearch="psearch"
         >
         </summaryGraph>
       </v-col>
@@ -99,6 +112,7 @@
         cavarege="none"
         :detail="dpData.detail"
         :loading="dpData.loading"
+        :psearch="psearch"
         >
         </summaryGraph>
       </v-col>
@@ -115,6 +129,7 @@
         cavarege="none"
         :detail="displayData.detail"
         :loading="displayData.loading"
+        :psearch="psearch"
         >
         </summaryGraph>
       </v-col>
@@ -131,6 +146,7 @@
         cavarege="none"
         :detail="inproData.detail"
         :loading="inproData.loading"
+        :psearch="psearch"
         >
         </summaryGraph>
       </v-col>
@@ -148,10 +164,18 @@ export default {
   },
   data () {
     return {
+      psearch:'',
       hzGetData:{
         id:1,
         title:'①　HZ占有率',
-        cols:['ターゲット','レジ台数','拠点数','カバレッジ','達成率'],
+        cols:[
+              {text:'企業',value:'chq'},
+              {text:'ターゲット',value:'all'},
+              {text:'レジ台数',value:'regi'},
+              {text:'拠点数',value:'num'},
+              {text:'カバレッジ',value:'cavarege'},
+              {text:'達成率',value:'rate',align:'end'},
+              ],
         all :0,
         num  :0,
         regi:0,
@@ -163,7 +187,12 @@ export default {
       hzAllData:{
         id:2,
         title:'②　HZ総拠点数',
-        cols:['ターゲット','拠点数','達成率'],
+        cols:[
+              {text:'企業',value:'chq'},
+              {text:'ターゲット',value:'all'},
+              {text:'拠点数',value:'num'},
+              {text:'達成率',value:'rate'},
+              ],
         all :0,
         num  :0,
         rate:0,
@@ -173,7 +202,12 @@ export default {
       sdAllData:{
         id:3,
         title:'③　SD総拠点数',
-        cols:['ターゲット','拠点数','達成率'],
+        cols:[
+              {text:'企業',value:'chq'},
+              {text:'ターゲット',value:'all'},
+              {text:'拠点数',value:'num'},
+              {text:'達成率',value:'rate'},
+              ],
         all :0,
         num  :0,
         rate:0,
@@ -183,7 +217,12 @@ export default {
       dpData:{
         id:4,
         title:'④　DP設置台数',
-        cols:['ターゲット','設置台数','達成率'],
+        cols:[
+              {text:'企業',value:'chq'},
+              {text:'ターゲット',value:'all'},
+              {text:'設置台数',value:'num'},
+              {text:'達成率',value:'rate'},
+              ],
         all :0,
         num  :0,
         rate:0,
@@ -193,7 +232,12 @@ export default {
       displayData:{
         id:5,
         title:'⑤　大陳列',
-        cols:['ターゲット','大陳回数','達成率'],
+        cols:[
+              {text:'企業',value:'chq'},
+              {text:'ターゲット',value:'all'},
+              {text:'大陳回数',value:'num'},
+              {text:'達成率',value:'rate'},
+              ],
         all :0,
         num  :0,
         rate:0,
@@ -203,7 +247,12 @@ export default {
       inproData:{
         id:6,
         title:'⑥　インプロ金額',
-        cols:['ターゲット','インプロ金額','達成率'],
+        cols:[
+              {text:'企業',value:'chq'},
+              {text:'ターゲット',value:'all'},
+              {text:'インプロ金額',value:'num'},
+              {text:'達成率',value:'rate'},
+              ],
         all :0,
         num  :0,
         rate:0,
@@ -271,7 +320,7 @@ export default {
         }
       })
       .then(function(response){
-        console.log(response.data);
+        //console.log(response.data);
         this.hzAllData.all = response.data.summary.all;
         this.hzAllData.num = response.data.summary.num;
         this.hzAllData.rate = response.data.summary.rate;
@@ -298,8 +347,8 @@ export default {
         }
       })
       .then(function(response){
-        console.log('exec SD ALL!')
-        console.log(response.data);
+        //console.log('exec SD ALL!')
+        //console.log(response.data);
         this.sdAllData.all = response.data.summary.all;
         this.sdAllData.num = response.data.summary.num;
         this.sdAllData.rate = response.data.summary.rate;
@@ -326,13 +375,13 @@ export default {
         }
       })
       .then(function(response){
-        console.log('exec Dp!')
-        console.log(response.data);
+        //console.log('exec Dp!')
+        //console.log(response.data);
         this.dpData.all = response.data.summary.all;
         this.dpData.num = response.data.summary.num;
         this.dpData.rate = response.data.summary.rate;
         this.dpData.detail = response.data.detail;
-        console.log(this.dpData.detail);
+        //console.log(this.dpData.detail);
       }.bind(this))
       .catch(function(error){
         console.log(error);
@@ -355,8 +404,8 @@ export default {
         }
       })
       .then(function(response){
-        console.log('exec Display')
-        console.log(response.data);
+        //console.log('exec Display')
+        //console.log(response.data);
         this.displayData.all = response.data.summary.all;
         this.displayData.num = response.data.summary.num;
         this.displayData.rate = response.data.summary.rate;
@@ -383,8 +432,8 @@ export default {
         }
       })
       .then(function(response){
-        console.log('exec Inpro!')
-        console.log(response.data);
+        //console.log('exec Inpro!')
+        //console.log(response.data);
         this.inproData.all = response.data.summary.all;
         this.inproData.num = response.data.summary.num;
         this.inproData.rate = response.data.summary.rate;
