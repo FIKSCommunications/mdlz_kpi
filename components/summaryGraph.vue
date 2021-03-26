@@ -34,10 +34,10 @@
                     <tbody>
                       <tr>
                         <td>全体</td>
-                        <td>{{ all | addComma }}<span v-if="regi!='none'">%</span></td>
+                        <td>{{ all | orgRound(10) | addComma }}<span v-if="regi!='none'">%</span></td>
                         <td v-if="regi!='none'">{{ regi | addComma }}</td>
                         <td>{{ num | addComma }}</td>
-                        <td v-if="cavarege!='none'">{{ cavarege | orgRound(10) }}%</td>
+                        <td v-if="cavarege!='none'">{{ cavarege | orgRound(10) | zeroPadding }}%</td>
                         <td>{{ rate | orgRound(10) }}%</td>
                       </tr>
                     </tbody>
@@ -88,7 +88,7 @@
             :search="search"
             >
               <template v-slot:item.all="{ item }">
-                {{ item.all | addComma }}<span v-if="regi!='none'">%</span>
+                {{ item.all | orgRound(10) | addComma }}<span v-if="regi!='none'">%</span>
               </template>
               <template v-slot:item.regi="{ item }">
                 {{ item.regi | addComma }}
@@ -97,7 +97,7 @@
                 {{ item.num | addComma }}
               </template>
               <template v-slot:item.cavarege="{ item }">
-                {{ item.cavarege | orgRound(10) }}%
+                {{ item.cavarege | orgRound(10) | zeroPadding }}%
               </template>
               <template v-slot:item.rate="{ item }">
                 {{ item.rate | orgRound(10) }}%
@@ -207,11 +207,22 @@ export default {
       //return value.toLocaleString();
     },
     orgRound: function(value, base) {
-      if (! value) return value;
+      if (!value) return value;
+      if (Number.isInteger(value)) {
+        return value;
+      }
       return Math.round(value * base) / base;
     },
     addPercent: function(value) {
       return value + '%';
+    },
+    zeroPadding: function(value) {
+      if (value <= 0) return value;
+      if (Number.isInteger(value)) {
+        return value + '.0';
+      } else {
+        return value;
+      }
     }
   },
   props:[
