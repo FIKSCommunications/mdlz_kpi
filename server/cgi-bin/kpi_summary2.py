@@ -5,7 +5,7 @@ import sys
 import json
 from dbAccessor import dbAccessor
 from inputParser import inputParser
-from my_function import h, e
+from my_function import h, e, int2
 
 # post値取得 startdt:'2021-02' enddt:'2021-02' clientid:162
 posts = inputParser()
@@ -52,11 +52,11 @@ for mon in posts.months:
 
         if len(rows2) > 0:
             #展開面数
-            num = num + 1
+            num = num + int2(rows2[0]['kpa_col1'])
 
             if row['clsp_chqid'] in chqs:
                 #CHQ拠点数
-                chqs[row['clsp_chqid']]['num'] = chqs[row['clsp_chqid']]['num'] + int(rows2[0]['kpa_col1'])
+                chqs[row['clsp_chqid']]['num'] = chqs[row['clsp_chqid']]['num'] + int2(rows2[0]['kpa_col1'])
 
         #shop毎ここまで
 
