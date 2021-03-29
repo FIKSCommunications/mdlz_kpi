@@ -282,8 +282,13 @@ export default {
     // 1.HZ占有率
     calcHzGetData(){
       this.hzGetData.loading = true;
+      let url = this.$urls.proPythonUrl + '/kpi_summary1.py';
+      if (this.$urls.envFlg === 'dev') {
+        url = this.$urls.devPythonUrl + '/kpi_summary1.py';
+      }
       //let url = 'http://localhost:8080/cgi-bin/kpi_summary1.py';
-      let url = 'server/cgi-bin/kpi_summary1.py';
+      //let url = 'server/cgi-bin/kpi_summary1.py';
+      console.log(this.$urls.envFlg);
       const response = axios.get(url, {
         params: {
           'startdt': this.startDt,
@@ -309,9 +314,12 @@ export default {
     // HZ総拠点数
     calcHzAllGetData(){      
       this.hzAllData.loading = true;
-
+      let url = this.$urls.proPythonUrl + '/kpi_summary2.py';
+      if (this.$urls.envFlg === 'dev') {
+        url = this.$urls.devPythonUrl + '/kpi_summary2.py';
+      }
       //let url = 'http://localhost:8080/cgi-bin/kpi_summary2.py';
-      let url = 'server/cgi-bin/kpi_summary2.py';
+      //let url = 'server/cgi-bin/kpi_summary2.py';
       const response = axios.get(url, {
         params: {
           'startdt': this.startDt,
@@ -336,9 +344,12 @@ export default {
     // 3.SD総拠点数
     calcSdAllGetData(){
       this.sdAllData.loading = true;
-
+      let url = this.$urls.proPythonUrl + '/kpi_summary3.py';
+      if (this.$urls.envFlg === 'dev') {
+        url = this.$urls.devPythonUrl + '/kpi_summary3.py';
+      }
       //let url = 'http://localhost:8080/cgi-bin/kpi_summary3.py';
-      let url = 'server/cgi-bin/kpi_summary3.py';
+      //let url = 'server/cgi-bin/kpi_summary3.py';
       const response = axios.get(url, {
         params: {
           'startdt': this.startDt,
@@ -364,9 +375,12 @@ export default {
     // 4.DP設置台数
     calcDpGetData(){
       this.dpData.loading = true;
-
+      let url = this.$urls.proPythonUrl + '/kpi_summary4.py';
+      if (this.$urls.envFlg === 'dev') {
+        url = this.$urls.devPythonUrl + '/kpi_summary4.py';
+      }
       //let url = 'http://localhost:8080/cgi-bin/kpi_summary4.py';
-      let url = 'server/cgi-bin/kpi_summary4.py';
+      //let url = 'server/cgi-bin/kpi_summary4.py';
       const response = axios.get(url, {
         params: {
           'startdt': this.startDt,
@@ -393,9 +407,12 @@ export default {
     // 5.大陳列
     calcDisplayGetData(){
       this.displayData.loading = true;
-
+      let url = this.$urls.proPythonUrl + '/kpi_summary5.py';
+      if (this.$urls.envFlg === 'dev') {
+        url = this.$urls.devPythonUrl + '/kpi_summary5.py';
+      }
       //let url = 'http://localhost:8080/cgi-bin/kpi_summary5.py';
-      let url = 'server/cgi-bin/kpi_summary5.py';
+      //let url = 'server/cgi-bin/kpi_summary5.py';
       const response = axios.get(url, {
         params: {
           'startdt': this.startDt,
@@ -421,9 +438,12 @@ export default {
     // 6.インプロ金額
     calcInproGetData(){
       this.inproData.loading = true;
-
+      let url = this.$urls.proPythonUrl + '/kpi_summary6.py';
+      if (this.$urls.envFlg === 'dev') {
+        url = this.$urls.devPythonUrl + '/kpi_summary6.py';
+      }
       //let url = 'http://localhost:8080/cgi-bin/kpi_summary6.py';
-      let url = 'server/cgi-bin/kpi_summary6.py';
+      //let url = 'server/cgi-bin/kpi_summary6.py';
       const response = axios.get(url, {
         params: {
           'startdt': this.startDt,

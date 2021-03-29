@@ -34,10 +34,10 @@
                     <tbody>
                       <tr>
                         <td>全体</td>
-                        <td>{{ all | orgRound(10) | addComma }}<span v-if="regi!='none'">%</span></td>
+                        <td>{{ all | orgRound(10) }}<span v-if="regi!='none'">%</span></td>
                         <td v-if="regi!='none'">{{ regi | addComma }}</td>
                         <td>{{ num | addComma }}</td>
-                        <td v-if="cavarege!='none'">{{ cavarege | orgRound(10) | zeroPadding }}%</td>
+                        <td v-if="cavarege!='none'">{{ cavarege | orgRound(10) }}%</td>
                         <td>{{ rate | orgRound(10) }}%</td>
                       </tr>
                     </tbody>
@@ -88,7 +88,7 @@
             :search="search"
             >
               <template v-slot:item.all="{ item }">
-                {{ item.all | orgRound(10) | addComma }}<span v-if="regi!='none'">%</span>
+                {{ item.all | orgRound(10) }}<span v-if="regi!='none'">%</span>
               </template>
               <template v-slot:item.regi="{ item }">
                 {{ item.regi | addComma }}
@@ -97,7 +97,7 @@
                 {{ item.num | addComma }}
               </template>
               <template v-slot:item.cavarege="{ item }">
-                {{ item.cavarege | orgRound(10) | zeroPadding }}%
+                {{ item.cavarege | orgRound(10) }}%
               </template>
               <template v-slot:item.rate="{ item }">
                 {{ item.rate | orgRound(10) }}%
@@ -206,12 +206,25 @@ export default {
       return formatter.format(value)
       //return value.toLocaleString();
     },
+    // 小数点１桁表示、カンマ区切り
     orgRound: function(value, base) {
+      let ret;
+      if (value == 0) return '0.0';
       if (!value) return value;
-      if (Number.isInteger(value)) {
-        return value;
+      // 少数点1桁四捨五入
+      ret =  Math.round(value * base) / base;
+
+      // カンマ区切り
+      let formatter = new Intl.NumberFormat('ja-JP')
+      ret = formatter.format(ret)
+
+      // 整数の場合は.0を付与
+      //if (Number.isInteger(ret)) {
+      if (!/\./.test(ret)) {
+        ret =  ret + '.0';
       }
-      return Math.round(value * base) / base;
+
+      return ret;
     },
     addPercent: function(value) {
       return value + '%';
