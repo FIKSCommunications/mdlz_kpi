@@ -231,7 +231,7 @@ export default {
       },
       displayData:{
         id:5,
-        title:'⑤　大陳列',
+        title:'⑤　大陳数',
         cols:[
               {text:'企業',value:'chq'},
               {text:'ターゲット',value:'all'},
