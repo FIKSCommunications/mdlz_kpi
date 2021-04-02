@@ -9,7 +9,8 @@ export default {
     titleTemplate: '%s - mdlz_kpi',
     title: 'mdlz_kpi',
     htmlAttrs: {
-      lang: 'en'
+      lang: 'jp',
+      'dir': 'ltr'
     },
     meta: [
       { charset: 'utf-8' },

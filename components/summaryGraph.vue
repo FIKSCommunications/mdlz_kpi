@@ -204,39 +204,25 @@ export default {
       if (! value) return value;
       let formatter = new Intl.NumberFormat('ja-JP')
       return formatter.format(value)
-      //return value.toLocaleString();
     },
     // 小数点１桁表示、カンマ区切り
     orgRound: function(value, base) {
       let ret;
-      if (value == 0) return '0.0';
+      if (value == 0) return value;
       if (!value) return value;
       // 少数点1桁四捨五入
-      ret =  Math.round(value * base) / base;
+      //ret =  Math.round(value * base) / base;
+      ret =  Math.round(value);
 
       // カンマ区切り
       let formatter = new Intl.NumberFormat('ja-JP')
       ret = formatter.format(ret)
-
-      // 整数の場合は.0を付与
-      //if (Number.isInteger(ret)) {
-      if (!/\./.test(ret)) {
-        ret =  ret + '.0';
-      }
 
       return ret;
     },
     addPercent: function(value) {
       return value + '%';
     },
-    zeroPadding: function(value) {
-      if (value <= 0) return value;
-      if (Number.isInteger(value)) {
-        return value + '.0';
-      } else {
-        return value;
-      }
-    }
   },
   props:[
     'title',
