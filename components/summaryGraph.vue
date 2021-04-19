@@ -34,11 +34,11 @@
                     <tbody>
                       <tr>
                         <td>全体</td>
-                        <td>{{ all | orgRound(10) }}<span v-if="regi!='none'">%</span></td>
+                        <td>{{ all | orgRound(regi) }}<span v-if="regi!='none'">%</span></td>
                         <td v-if="regi!='none'">{{ regi | addComma }}</td>
                         <td>{{ num | addComma }}</td>
-                        <td v-if="cavarege!='none'">{{ cavarege | orgRound(10) }}%</td>
-                        <td>{{ rate | orgRound(10) }}%</td>
+                        <td v-if="cavarege!='none'">{{ cavarege | orgRound(regi) }}%</td>
+                        <td>{{ rate | orgRound }}%</td>
                       </tr>
                     </tbody>
                   </template>
@@ -88,7 +88,7 @@
             :search="search"
             >
               <template v-slot:item.all="{ item }">
-                {{ item.all | orgRound(10) }}<span v-if="regi!='none'">%</span>
+                {{ item.all | orgRound(regi) }}<span v-if="regi!='none'">%</span>
               </template>
               <template v-slot:item.regi="{ item }">
                 {{ item.regi | addComma }}
@@ -97,10 +97,10 @@
                 {{ item.num | addComma }}
               </template>
               <template v-slot:item.cavarege="{ item }">
-                {{ item.cavarege | orgRound(10) }}%
+                {{ item.cavarege | orgRound }}%
               </template>
               <template v-slot:item.rate="{ item }">
-                {{ item.rate | orgRound(10) }}%
+                {{ item.rate | orgRound }}%
               </template>
             </v-data-table>
             <!--v-simple-table 
@@ -176,9 +176,9 @@ export default {
       head = head.slice(0, -1) + '\n';
       let csv = head;
       if (this.regi != 'none') {
-        csv += '"全体",' + this.all +','+ this.regi +','+ this.num +','+  Math.round(this.cavarege*10)/10 +','+  Math.round(this.rate*10)/10 + '\n\n';
+        csv += '"全体",' + this.all.toFixed(1) +','+ this.regi +','+ this.num +','+  this.cavarege.toFixed(1) +','+  this.rate.toFixed(1) + '\n\n';
       } else {
-        csv += '"全体",' + this.all +','+ this.num +','+  Math.round(this.rate*10)/10 + '\n\n';
+        csv += '"全体",' + this.all.toFixed(0) +','+ this.num +','+  this.rate.toFixed(1) + '\n\n';
       }
 
       //企業別
@@ -186,9 +186,9 @@ export default {
       this.detalData.forEach(el => {
         let line = '';
         if (this.regi != 'none') {
-          line = '"' + el['chq'] +'",'+ el['all'] +','+ el['regi'] +','+ el['num'] +','+  Math.round(el['cavarege']*10)/10 +','+  Math.round(el['rate']*10)/10 + '\n';
+          line = '"' + el['chq'] +'",'+ el['all'].toFixed(1) +','+ el['regi'] +','+ el['num'] +','+  el['cavarege'].toFixed(1) +','+  el['rate'].toFixed(1) + '\n';
         } else {
-          line = '"' + el['chq'] +'",'+ el['all'] +','+ el['num'] +','+  Math.round(el['rate']*10)/10 + '\n';
+          line = '"' + el['chq'] +'",'+ el['all'].toFixed(0) +','+ el['num'] +','+  el['rate'].toFixed(1) + '\n';
         }
         csv += line;
       })
@@ -205,21 +205,30 @@ export default {
       let formatter = new Intl.NumberFormat('ja-JP')
       return formatter.format(value)
     },
+
     // 小数点１桁表示、カンマ区切り
-    orgRound: function(value, base) {
+    orgRound: function(value, regi) {
       let ret;
-      if (value == 0) return value;
-      if (!value) return value;
+      if (value === 0 || !value) {
+        if (regi !== 'none') {
+          return '0.0';
+        } else {
+          return '0';
+        }
+      }
+
       // 少数点1桁四捨五入
-      //ret =  Math.round(value * base) / base;
-      ret =  Math.round(value);
-
-      // カンマ区切り
-      let formatter = new Intl.NumberFormat('ja-JP')
-      ret = formatter.format(ret)
-
+      if (regi !== 'none') {
+        ret = (value).toFixed(1);
+      } else {
+        // カンマ区切り
+        ret = value.toFixed(0);
+        let formatter = new Intl.NumberFormat('ja-JP');
+        ret = formatter.format(ret);
+      }
       return ret;
     },
+
     addPercent: function(value) {
       return value + '%';
     },
