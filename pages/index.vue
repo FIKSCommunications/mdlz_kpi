@@ -271,14 +271,64 @@ export default {
         return false;
       }
       this.viewFlgSummary = true;
-      this.calcHzGetData();
-      this.calcHzAllGetData();
-      this.calcSdAllGetData() ;
-      this.calcDpGetData();
-      this.calcDisplayGetData();
-      //6は未完成のため除く
-      //this.calcInproGetData();
+      /*
+      let url = this.$urls.proPythonUrl + '/kpi_summary0.py';
+      if (this.$urls.envFlg === 'dev') {
+        url = this.$urls.devPythonUrl + '/kpi_summary0.py';
+      }
+      const response = axios.get(url, {
+        params: {
+          'status':'execute',
+          'searchdt':'2021-05-10',
+          'term_1': this.startDt,
+          'term_2': this.endDt,
+          'userid': 0,
+        }
+      })
+      .then(function(response){
+        console.log(response)
+        */
+        //this.registLog();
+        this.calcHzGetData();
+        this.calcHzAllGetData();
+        this.calcSdAllGetData() ;
+        this.calcDpGetData();
+        this.calcDisplayGetData();
+        /*
+      }.bind(this))
+      .catch(function(error){
+        console.log(error);
+      })
+      .finally(function(){
+        this.hzGetData.loading = false;        
+      }.bind(this));
+      */
     },
+    registLog() {
+      let url = this.$urls.proPythonUrl + '/kpi_summary0.py';
+      if (this.$urls.envFlg === 'dev') {
+        url = this.$urls.devPythonUrl + '/kpi_summary0.py';
+      }
+      const response = axios.get(url, {
+        params: {
+          'status':'execute',
+          'searchdt':'2021-05-10',
+          'term_1': this.startDt,
+          'term_2': this.endDt,
+          'userid': 0,
+        }
+      })
+      .then(function(response){
+        console.log(response)
+      }.bind(this))
+      .catch(function(error){
+        console.log(error);
+      })
+      .finally(function(){
+
+      }.bind(this));
+    },
+
     // 1.HZ占有率
     calcHzGetData(){
       this.hzGetData.loading = true;
@@ -407,31 +457,109 @@ export default {
     // 5.大陳列
     calcDisplayGetData(){
       this.displayData.loading = true;
-      let url = this.$urls.proPythonUrl + '/kpi_summary5.py';
+      this.displayData.all = 0;
+      this.displayData.num = 0;
+      this.displayData.rate = 0;
+      this.displayData.detail = [];
+      let url = this.$urls.proPythonUrl + '/kpi_summary5log.py';
       if (this.$urls.envFlg === 'dev') {
-        url = this.$urls.devPythonUrl + '/kpi_summary5.py';
+        url = this.$urls.devPythonUrl + '/kpi_summary5log.py';
       }
       //let url = 'http://localhost:8080/cgi-bin/kpi_summary5.py';
       //let url = 'server/cgi-bin/kpi_summary5.py';
       const response = axios.get(url, {
+        //timeout: 30000,
         params: {
           'startdt': this.startDt,
           'enddt': this.endDt,
           'clientid': 162,
         }
       })
-      .then(function(response){
-        //console.log('exec Display')
-        //console.log(response.data);
-        this.displayData.all = response.data.summary.all;
-        this.displayData.num = response.data.summary.num;
-        this.displayData.rate = response.data.summary.rate;
-        this.displayData.detail = response.data.detail;
+      .then(function(data){
+        if (data.data.summary) {
+          // logから取得
+            this.displayData.all = data.data.summary.all;
+            this.displayData.num = data.data.summary.num;
+            this.displayData.rate = data.data.summary.rate;
+            this.displayData.detail = data.data.detail;
+            this.displayData.loading = false;        
+            return false
+        } else {
+          // 再計算
+
+          if (data.data.result) {
+
+            // 更新チェック処理　ここから
+            console.log(data.data.detail); //keyid
+
+            const numOfTime = 10; // ループ数
+            const delay = 10000; // スリーブ時間 ms
+
+            // 条件
+            let t = this
+            const judge = function(r,t) {
+                if(r.data.result == 'done') {
+                  const j = JSON.parse(r.data.detail)
+                  t.displayData.all = j.summary.all;
+                  t.displayData.num = j.summary.num;
+                  t.displayData.rate = j.summary.rate;
+                  t.displayData.detail = j.detail;
+                  return true;
+                }
+                return false;
+            };
+
+            // スリーブ
+            function sleep(time) {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        resolve();
+                    }, time);
+                });
+            }
+
+            let watchurl = this.$urls.proPythonUrl + '/kpi_summary5watch.py';
+            if (this.$urls.envFlg === 'dev') {
+              watchurl = this.$urls.devPythonUrl + '/kpi_summary5watch.py';
+            }
+
+            // ループ
+            const loopFunc = async (delay, numOfTime, judge) => {
+                const arr = Array.from({length: numOfTime}, (v, k) => k);
+                for(let i of arr){
+                    let r = await axios.get(watchurl,{
+                      params:{ 'keyid': data.data.detail }
+                    })
+                    .then(function (response) {
+                        console.log(i, response);
+                        return Promise.resolve(response);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+                    // 条件処理を追加
+                    if(judge(r,t)){
+                        return Promise.resolve(1);
+                    }                  
+                    await sleep(delay);
+                } 
+            };
+            loopFunc(delay, numOfTime, judge).then(()=>{
+                console.log('done!!');
+                this.displayData.loading = false; 
+            });
+
+            // 更新チェック処理　ここまで
+
+          } else {
+            alert('失敗')
+            this.displayData.loading = false;        
+          }         
+
+        }
       }.bind(this))
       .catch(function(error){
         console.log(error);
-      })
-      .finally(function(){
         this.displayData.loading = false;        
       }.bind(this));
     },

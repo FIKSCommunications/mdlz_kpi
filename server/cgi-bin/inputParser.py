@@ -22,9 +22,28 @@ class inputParser:
             e('not found clientid')
             sys.exit()
         """
-        self.startdt = form.getfirst('startdt', '2021-01')
-        self.enddt = form.getfirst('enddt', '2021-01')
-        self.clientid = form.getfirst('clientid', 162)
+        if 'startdt' not in form or 'enddt' not in form or 'clientid' not in form:
+            #print('form')
+            args = sys.argv
+
+            if len(args) == 5:
+                #print('args')
+                self.startdt = args[1]
+                self.enddt = args[2]
+                self.clientid = args[3]
+                self.keyid = args[4]
+            else:
+                #print('failed')
+                self.startdt = '2021-01'
+                self.enddt = '2021-01'
+                self.clientid = 162
+                self.keyid = -1
+        else:
+            #print('batch')
+            self.startdt = form.getfirst('startdt', '2021-01')
+            self.enddt = form.getfirst('enddt', '2021-01')
+            self.clientid = form.getfirst('clientid', 162)
+            self.keyid = -1
 
         """
         #単月対応

@@ -64,6 +64,53 @@ class dbAccessor:
                 'ORDER BY ktpid ASC'
         return self.execQuery(sql, [clientid, date, date])
 
+    def insertSearchLog(self, data):
+        try:
+            sql = 'INSERT INTO t_kpi_searchlog (KPS_STATUS,KPS_SEARCHDT,KPS_QID,KPS_TERM_1,KPS_TERM_2,KPS_USERID,KPS_NEWDATE) '\
+                'VALUES (%(kps_status)s,%(kps_searchdt)s,%(kps_qid)s,%(kps_term_1)s,%(kps_term_2)s,%(kps_userid)s,%(kps_newdate)s)'
+            self.cur.execute(sql, data)
+            self.conn.commit()
+            return True
+        except MySQLdb.Error as e:
+            #print('MySQLdb.Error: ', e)
+            return False
+
+    def updateSearchLog(self, data):
+        try:
+            sql = 'UPDATE t_kpi_searchlog SET '\
+                'KPS_STATUS = "done",'\
+                'KPS_EDITDATE = %(kps_editdate)s,'\
+                'KPS_LOG = %(kps_log)s '\
+                'WHERE KPSID = %(kpsid)s'
+            self.cur.execute(sql, data)
+            self.conn.commit()
+            return True
+        except MySQLdb.Error as e:
+            #print('MySQLdb.Error: ', e)
+            return False
+    
+    def checkSearchLog(self, keyid):
+        try:
+            sql = 'SELECT KPS_LOG FROM t_kpi_searchlog '\
+                'WHERE KPSID = %s AND '\
+                'KPS_DELETE = 0 AND '\
+                'KPS_STATUS = "done"'
+            return self.execQuery(sql, [keyid])
+        except MySQLdb.Error as e:
+            return False
+    
+    def getSearchLog(self, data):
+        try:
+            sql = "SELECT KPSID,KPS_LOG FROM t_kpi_searchlog WHERE "\
+                    "KPS_DELETE = 0 AND KPS_STATUS = 'done' AND "\
+                    "KPS_SEARCHDT = %(kps_searchdt)s AND "\
+                    "KPS_QID = %(kps_qid)s AND "\
+                    "KPS_TERM_1 = %(kps_term_1)s AND "\
+                    "KPS_TERM_2 = %(kps_term_2)s AND "\
+                    "KPS_LOG is not NULL LIMIT 1"
+            return self.execQuery(sql, data)
+        except MySQLdb.Error as e:
+            return False
 
     def __del__(self):
         self.conn.close()
