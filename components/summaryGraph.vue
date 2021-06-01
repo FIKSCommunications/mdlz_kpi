@@ -26,23 +26,25 @@
                   <template v-slot:default>
                     <thead>
                       <tr>
-                        <th v-for="(col, index) in cols" :key="index" class="text-left">
-                          {{col.text}}
+                        <th v-for="(col, index) in cols" :key="index" :class="{ 'text-right': 'align' in col }">
+                          {{ col.text }}
                         </th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>全体</td>
-                        <td>{{ all | orgRound(regi) }}<span v-if="regi!='none'">%</span></td>
-                        <td v-if="regi!='none'">{{ regi | addComma }}</td>
-                        <td>{{ num | addComma }}</td>
-                        <td v-if="cavarege!='none'">{{ cavarege | orgRound(regi) }}%</td>
-                        <td>{{ rate | orgRound }}%</td>
+                      <tr v-for="(sum, index) in summary" :key="index">
+                        <td>*</td>
+                        <td v-if="categoryFlg!='none'">{{ sum.category }}</td>
+                        <td class="text-right">{{ sum.all | orgRound(regi) }}</td>
+                        <td class="text-right" v-if="regi!='none'">{{ sum.regi | addComma }}</td>
+                        <td class='text-right'>{{ sum.num | addComma }}</td>
+                        <td class="text-right" v-if="regi!='none'">{{ sum.cavarege | orgRound(regi) }}%</td>
+                        <td :class="{ 'light-blue lighten-4' : sum.rate >= 100, 'text-right' : true  }">{{ sum.rate | orgRound }}%</td>
                       </tr>
                     </tbody>
                   </template>
                 </v-simple-table>
+
               </v-sheet>
             </v-col>
           </v-row>
@@ -88,7 +90,7 @@
             :search="search"
             >
               <template v-slot:item.all="{ item }">
-                {{ item.all | orgRound(regi) }}<span v-if="regi!='none'">%</span>
+                {{ item.all | addComma }}
               </template>
               <template v-slot:item.regi="{ item }">
                 {{ item.regi | addComma }}
@@ -100,34 +102,9 @@
                 {{ item.cavarege | orgRound }}%
               </template>
               <template v-slot:item.rate="{ item }">
-                {{ item.rate | orgRound }}%
+                <div :class="{ 'light-blue lighten-4' : item.rate >= 100  }">{{ item.rate | orgRound }}%</div>
               </template>
             </v-data-table>
-            <!--v-simple-table 
-            dense
-            fixed-header
-            >
-              <template v-slot:default>
-                <thead>
-                  <tr>
-                    <th>企業</th>
-                    <th v-for="(col, index) in cols" :key="index" class="text-left">
-                      {{col}}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(data, index) in detalData" :key="index">
-                    <td>{{data.chq}}</td>
-                    <td>{{ data.all | addComma }}<span v-if="regi!='none'">%</span></td>
-                    <td v-if="regi!='none'">{{ data.regi | addComma }}</td>
-                    <td>{{ data.num | addComma }}</td>
-                    <td v-if="cavarege!='none'">{{ data.cavarege | orgRound(10) }}%</td>
-                    <td>{{ data.rate | orgRound(10) }}%</td>
-                  </tr>
-                </tbody>
-              </template>
-            </v-simple-table-->
           </v-sheet>
         </v-col>
       </v-row>
@@ -175,20 +152,29 @@ export default {
       });      
       head = head.slice(0, -1) + '\n';
       let csv = head;
+      /*
       if (this.regi != 'none') {
         csv += '"全体",' + this.all.toFixed(1) +','+ this.regi +','+ this.num +','+  this.cavarege.toFixed(1) +','+  this.rate.toFixed(1) + '\n\n';
       } else {
         csv += '"全体",' + this.all.toFixed(0) +','+ this.num +','+  this.rate.toFixed(1) + '\n\n';
       }
+      */
+      this.summary.forEach(el => {
+        if (this.regi != 'none') {
+          csv += '"全体","' + el['category'] + '",' + el['all'].toFixed(1) +','+ el['regi'] +','+ el['num'] +','+  el['cavarege'].toFixed(1) +','+ el['rate'].toFixed(1) + '\n\n';
+        } else {
+          csv += '"全体","' + el['category'] + '",' + el['all'].toFixed(0) +','+ el['num'] +','+ el['rate'].toFixed(1) + '\n\n';
+        }
+      });
 
       //企業別
       csv += head;
       this.detalData.forEach(el => {
         let line = '';
         if (this.regi != 'none') {
-          line = '"' + el['chq'] +'",'+ el['all'].toFixed(1) +','+ el['regi'] +','+ el['num'] +','+  el['cavarege'].toFixed(1) +','+  el['rate'].toFixed(1) + '\n';
+          line = '"' + el['chq'] +'",'+ el['category'] +'",'+ el['all'].toFixed(1) +','+ el['regi'] +','+ el['num'] +','+  el['cavarege'].toFixed(1) +','+  el['rate'].toFixed(1) + '\n';
         } else {
-          line = '"' + el['chq'] +'",'+ el['all'].toFixed(0) +','+ el['num'] +','+  el['rate'].toFixed(1) + '\n';
+          line = '"' + el['chq'] +'",'+ el['category'] +'",'+ el['all'].toFixed(0) +','+ el['num'] +','+  el['rate'].toFixed(1) + '\n';
         }
         csv += line;
       })
@@ -219,7 +205,7 @@ export default {
 
       // 少数点1桁四捨五入
       if (regi !== 'none') {
-        ret = (value).toFixed(1);
+        ret = parseFloat(value).toFixed(1);
       } else {
         // カンマ区切り
         ret = value.toFixed(0);
@@ -236,11 +222,9 @@ export default {
   props:[
     'title',
     'cols',
-    'all',
-    'rate',
-    'num',
     'regi',
-    'cavarege',
+    'categoryFlg',
+    'summary',
     'detail',
     'loading',
     'psearch',
