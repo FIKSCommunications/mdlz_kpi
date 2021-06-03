@@ -1,7 +1,7 @@
 import Vue from 'vue'
 
 Vue.prototype.$urls = {
-    envFlg:'pro',  // dev or pro
-    devPythonUrl: 'http://localhost:8080/cgi-bin',
+    envFlg:'dev',  // dev or pro
+    devPythonUrl: 'http://localhost/ddss_new/api/kpi',
     proPythonUrl: 'server/cgi-bin',
 }
