@@ -63,14 +63,18 @@
                 </v-select>
               </v-col>
               <v-col class="my-0 py-0">
-                <v-select
+                <!-- <v-select
                   v-model="checkedSales"
                   multiple
                   label="セールス"
                   item-text="label"
                   :items="selectSales"
                 >
-                </v-select>
+                </v-select> -->
+                <fiks-multiselectbox-component
+                  @input="selected_sales_update"  
+                  label="セールス" :listOptions="selectSales">
+                </fiks-multiselectbox-component>
               </v-col>
               <v-col class="my-0 py-0">
                 <v-select
@@ -83,14 +87,18 @@
                 </v-select>
               </v-col>
               <v-col class="my-0 py-0">
-                <v-select
+                <!-- <v-select
                   v-model="checkedChq"
                   multiple
                   label="企業名"
                   item-text="label"
                   :items="selectChq"
                 >
-                </v-select>
+                </v-select> -->
+                <fiks-multiselectbox-component
+                  @input="selected_chq_update"  
+                  label="企業名" :listOptions="selectChq">
+                </fiks-multiselectbox-component>
               </v-col>
             </v-row>
             <v-row>
@@ -233,6 +241,7 @@
 <script>
 import moment from "moment";
 import summaryGraph from "../components/summaryGraph";
+import multiSelect from "../components/FiksMultiselectboxComponent.vue";
 import axios from 'axios'
 export default {
   components:{
@@ -676,7 +685,12 @@ export default {
         that.displayData.loading = false;        
       });
     },    
-    
+    selected_sales_update(value) {
+      this.checkedSales = value
+    },
+    selected_chq_update(value) {
+      this.checkedChq = value
+    },
     // 5.大陳列ログバージョン 使っていない
     /*
     calcDisplayGetData_log(){
