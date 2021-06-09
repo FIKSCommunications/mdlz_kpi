@@ -43,8 +43,23 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     //'@nuxtjs/vuetify'
+    '@nuxtjs/proxy',
     '@nuxtjs/axios',
   ],
+  proxy: {
+    '/ddss_dev': {
+      target: 'http://localhost/ddss_new/api/kpi',
+      pathRewrite: {
+        '^/ddss_dev': '',
+      },
+    },
+    '/ddss_new': {
+      target: 'https://fiksdds.com/ddss_new/api/kpi',
+      pathRewrite: {
+        '^/ddss_new': '',
+      },        
+    }
+  },
   axios: {
 
   },
