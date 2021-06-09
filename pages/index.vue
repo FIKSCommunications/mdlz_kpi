@@ -1,5 +1,10 @@
 <template>
   <div>
+    <div v-if="!loginChk">
+      <p class="mt-4">ログインが必要です</p>
+      <a href="https://fiksdds.com/ddss_new/login/sv/login.php">DDS ログイン画面</a>
+    </div>
+    <div v-else>
     <v-row justify="center" align="center">
       <v-col cols="12">
         <v-card>
@@ -234,7 +239,7 @@
         </summaryGraph>
       </v-col>
     </v-row>
-
+    </div>
   </div>
 </template>
 
@@ -242,13 +247,65 @@
 import moment from "moment";
 import summaryGraph from "../components/summaryGraph";
 import multiSelect from "../components/FiksMultiselectboxComponent.vue";
-import axios from 'axios'
+//import qs from "querystring";
+import axios from 'axios';
 export default {
+  // get取得
+  async asyncData(context) {
+
+    // post version
+    /*
+    var body = "";
+    var temp = "";
+    while ((temp = context.req.read())) {
+      body += temp;
+    }
+    var postParams = qs.parse(body);
+    console.log(postParams)
+    return { hoge: "", ...postParams };
+    */
+
+    // get version
+    const token = context.query['token'] || '';
+    const userid = context.query['userid'] || '';
+    const clientid = context.query['clientid'] || '';
+    if (!token || !clientid || !userid) {
+      console.log('NG');
+      return { 
+        loginChk: false,
+      }
+    }
+    console.log('OK');
+
+    const initFile = '/kpi_summary_login_ajax.php';
+    let url = '/ddss_new' + initFile;
+    //if (this.$urls.envFlg === 'dev') {
+      url = '/ddss_dev' + initFile;
+    //}
+    let that = this;
+    let params = new URLSearchParams();
+    params.append('token', token);
+    params.append('clientid', clientid);
+    params.append('userid', userid);
+
+    const res = await axios.post(url,params)
+    console.log(res);
+    console.log(res.data)
+
+    return { 
+      loginChk: res.data==='true',
+    }
+  },
   components:{
     summaryGraph,
   },
   data () {
     return {
+      token:'',
+      clientid:'',
+      userid:'',
+      loginid: 0,
+
       psearch:'',
 
       selectHonbu:[],
@@ -368,6 +425,30 @@ export default {
       viewFlgSummary:false,
     }
   },
+  /*
+  async mounted () {
+    console.log(this.token);
+    if (!this.token) {
+      console.log('no login');
+    }
+    const initFile = '/kpi_summary_login_ajax.php';
+    //let url = this.$urls.proPythonUrl + initFile;
+    let url = '/ddss_new' + initFile;
+    if (this.$urls.envFlg === 'dev') {
+      //url = this.$urls.devPythonUrl + initFile;
+      url = '/ddss_dev' + initFile;
+    }
+    let that = this;
+    const res = await axios.post(url,{
+      token: this.token,
+      clientid : this.clientid,
+      userid: this.userid,
+    })
+    console.log(res);
+
+  },
+  */
+  
   created: function() {
     // 検索オプションの取得
     this.getSearchOption();

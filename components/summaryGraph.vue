@@ -35,7 +35,7 @@
                       <tr v-for="(sum, index) in summary" :key="index">
                         <td>*</td>
                         <td v-if="categoryFlg!='none'">{{ sum.category }}</td>
-                        <td class="text-right">{{ sum.all | orgRound(regi) }}</td>
+                        <td class="text-right">{{ sum.all | orgRound(regi) }}<span v-if="regi!='none'">%</span></td>
                         <td class="text-right" v-if="regi!='none'">{{ sum.regi | addComma }}</td>
                         <td class='text-right'>{{ sum.num | addComma }}</td>
                         <td class="text-right" v-if="regi!='none'">{{ sum.cavarege | orgRound(regi) }}%</td>
@@ -90,7 +90,7 @@
             :search="search"
             >
               <template v-slot:item.all="{ item }">
-                {{ item.all | addComma }}
+                {{ item.all | orgRound(regi) }}<span v-if="regi!='none'">%</span>
               </template>
               <template v-slot:item.regi="{ item }">
                 {{ item.regi | addComma }}
