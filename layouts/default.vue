@@ -37,7 +37,7 @@
       <v-btn
       　text
         primary
-        href="https://fiksdds.com/ddss_new/top/top.php"
+        :href="this.$urls.ddssUrl+this.$urls.topUrl"
       >DDSへ戻る</v-btn>
     </v-app-bar>
     <v-main>
@@ -73,7 +73,7 @@ export default {
       rightDrawer: false,
       title: 'KPI進捗'
     }
-  }
+  },
 }
 </script>
 <style scoped>

@@ -2,7 +2,11 @@
   <div>
     <div v-if="!loginChk">
       <p class="mt-4">ログインが必要です</p>
-      <a href="https://fiksdds.com/ddss_new/login/sv/login.php">DDS ログイン画面</a>
+      <v-btn
+        text
+        primary
+        :href="this.$urls.ddssUrl+this.$urls.loginUrl">DDS ログイン画面
+      </v-btn>
     </div>
     <div v-else>
     <v-row justify="center" align="center">
@@ -269,15 +273,14 @@ export default {
     const token = context.query['token'] || '';
     const userid = context.query['userid'] || '';
     const clientid = context.query['clientid'] || '';
-    if (!token || !clientid || !userid) {
-      console.log('NG');
-      return { 
-        loginChk: false,
-      }
+    return { 
+      token: token,
+      userid: userid,
+      clientid: clientid,
     }
-    console.log('OK');
 
-    const initFile = '/kpi_summary_login_ajax.php';
+    /*
+    const initFile = '/api/kpi/kpi_summary_login_ajax.php';
     let url = '/ddss_new' + initFile;
     //if (this.$urls.envFlg === 'dev') {
       url = '/ddss_dev' + initFile;
@@ -287,24 +290,16 @@ export default {
     params.append('token', token);
     params.append('clientid', clientid);
     params.append('userid', userid);
-
+    
     const res = await axios.post(url,params)
-    console.log(res);
-    console.log(res.data)
-
-    return { 
-      loginChk: res.data==='true',
-    }
+    */
   },
   components:{
     summaryGraph,
   },
   data () {
     return {
-      token:'',
-      clientid:'',
-      userid:'',
-      loginid: 0,
+      loginChk: false,
 
       psearch:'',
 
@@ -449,17 +444,33 @@ export default {
   },
   */
   
-  created: function() {
-    // 検索オプションの取得
-    this.getSearchOption();
+  created: async function() {
+
+    // ログインチェック
+    if (!this.userid || !this.clientid || !this.token) {
+      this.loginChk = false;
+    } else {
+      const initFile = '/kpi_summary_login_ajax.php';
+      let url = this.$urls.ddssUrl + this.$urls.apiUrl + initFile;
+
+      let params = new URLSearchParams();
+      params.append('token', this.token);
+      params.append('clientid', this.clientid);
+      params.append('userid', this.userid);
+      
+      const res = await axios.post(url,params)
+      if (res.data === 'true') {
+        this.loginChk = true;
+
+        // 検索オプションの取得
+        this.getSearchOption();
+      }
+    }
   },
   methods:{
     getSearchOption(){
       const initFile = '/kpi_summaryinit_ajax.php';
-      let url = this.$urls.proPythonUrl + initFile;
-      if (this.$urls.envFlg === 'dev') {
-        url = this.$urls.devPythonUrl + initFile;
-      }
+      let url = this.$urls.ddssUrl+this.$urls.apiUrl + initFile;
       let that = this;
       axios.get(url, {
         params: {
@@ -505,10 +516,7 @@ export default {
     calcVisitGetData(){
       const visitFile = '/kpi_summaryshop_ajax.php';
       this.visitData.loading = true;
-      let url = this.$urls.proPythonUrl + visitFile;
-      if (this.$urls.envFlg === 'dev') {
-        url = this.$urls.devPythonUrl + visitFile;
-      }
+      let url = this.$urls.ddssUrl+this.$urls.apiUrl + visitFile;
 
       let that = this;
       const response = axios.get(url, {
@@ -548,10 +556,7 @@ export default {
     calcCallGetData(){
       const callFile = '/kpi_summarycall_ajax.php';
       this.callData.loading = true;
-      let url = this.$urls.proPythonUrl + callFile;
-      if (this.$urls.envFlg === 'dev') {
-        url = this.$urls.devPythonUrl + callFile;
-      }
+      let url = this.$urls.ddssUrl+this.$urls.apiUrl + callFile;
 
       let that = this;
       const response = axios.get(url, {
@@ -586,10 +591,7 @@ export default {
     calcHzGetData(){
       const hzFile = '/kpi_summary1_ajax.php';
       this.hzGetData.loading = true;
-      let url = this.$urls.proPythonUrl + hzFile;
-      if (this.$urls.envFlg === 'dev') {
-        url = this.$urls.devPythonUrl + hzFile;
-      }
+      let url = this.$urls.ddssUrl+this.$urls.apiUrl + hzFile;
 
       let that = this;
       const response = axios.get(url, {
@@ -623,10 +625,7 @@ export default {
     calcHzAllGetData(){
       const hzallFile = '/kpi_summary2_ajax.php';
       this.hzAllData.loading = true;
-      let url = this.$urls.proPythonUrl + hzallFile;
-      if (this.$urls.envFlg === 'dev') {
-        url = this.$urls.devPythonUrl + hzallFile;
-      }
+      let url = this.$urls.ddssUrl+this.$urls.apiUrl + hzallFile;
 
       let that = this;
       const response = axios.get(url, {
@@ -660,10 +659,7 @@ export default {
     calcSdAllGetData(){
       const sdallFile = '/kpi_summary3_ajax.php';
       this.sdAllData.loading = true;
-      let url = this.$urls.proPythonUrl + sdallFile;
-      if (this.$urls.envFlg === 'dev') {
-        url = this.$urls.devPythonUrl + sdallFile;
-      }
+      let url = this.$urls.ddssUrl+this.$urls.apiUrl + sdallFile;
 
       let that = this;
       const response = axios.get(url, {
@@ -697,10 +693,7 @@ export default {
     calcDpGetData(){
       const dpFile = '/kpi_summary4_ajax.php';
       this.dpData.loading = true;
-      let url = this.$urls.proPythonUrl + dpFile;
-      if (this.$urls.envFlg === 'dev') {
-        url = this.$urls.devPythonUrl + dpFile;
-      }
+      let url = this.$urls.ddssUrl+this.$urls.apiUrl + dpFile;
 
       let that = this
       const response = axios.get(url, {
@@ -734,10 +727,7 @@ export default {
     calcDisplayGetData(){
       const displayFile = '/kpi_summary5_ajax.php';
       this.displayData.loading = true;
-      let url = this.$urls.proPythonUrl + displayFile;
-      if (this.$urls.envFlg === 'dev') {
-        url = this.$urls.devPythonUrl + displayFile;
-      }
+      let url = this.$urls.ddssUrl+this.$urls.apiUrl + displayFile;
 
       let that = this;
       const response = axios.get(url, {

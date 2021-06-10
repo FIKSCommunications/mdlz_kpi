@@ -46,9 +46,10 @@ export default {
     '@nuxtjs/proxy',
     '@nuxtjs/axios',
   ],
+  /*
   proxy: {
     '/ddss_dev': {
-      target: 'http://localhost/ddss_new/api/kpi',
+      target: 'https://fikssystems.com/ddss_dev/api/kpi',
       pathRewrite: {
         '^/ddss_dev': '',
       },
@@ -60,6 +61,7 @@ export default {
       },        
     }
   },
+  */
   axios: {
 
   },
