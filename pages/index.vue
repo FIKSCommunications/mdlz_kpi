@@ -469,6 +469,7 @@ export default {
   },
   methods:{
     getSearchOption(){
+      if (this.endDt <= this.startDt) return false;
       const initFile = '/kpi_summaryinit_ajax.php';
       let url = this.$urls.ddssUrl+this.$urls.apiUrl + initFile;
       let that = this;
