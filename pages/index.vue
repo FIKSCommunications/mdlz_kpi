@@ -111,6 +111,13 @@
               </v-col>
             </v-row>
             <v-row>
+                <v-btn
+                  color="default"
+                  class="ml-2 mb-2"
+                  @click="clickFilterClear"
+                >
+                  選択条件のクリア
+                </v-btn>
               <v-spacer></v-spacer>
                 <v-btn
                   color="primary"
@@ -497,6 +504,16 @@ export default {
         that.selectChq = [];
       });
     },
+
+    // 選択条件のクリア
+    clickFilterClear(){
+        this.selectHonbu = [];
+        this.selectGroup = [];
+        this.selectChanel = [];
+        this.selectSales = [];
+        this.selectChq = [];
+    },
+
     // 集計ボタン
     clickAggregate(){
       if (this.startDt > this.endDt) {
