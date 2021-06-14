@@ -89,7 +89,28 @@
             dense
             :search="search"
             >
-              <template v-slot:item.all="{ item }">
+            <template v-slot:item="{ item }">
+              <tr :class="{ 'yellow lighten-5' : item.category==='ANY' && categoryFlg!=='none' }">
+                <td>{{ item.chq }}</td>
+                <td v-if="categoryFlg!='none'">{{ item.category }}</td>
+                <td class="text-right">
+                  {{ item.all | orgRound(regi) }}<span v-if="regi!='none'">%</span>
+                </td>
+                <td class="text-right" v-if="regi!='none'">
+                  {{ item.regi | addComma }}
+                </td>
+                <td class="text-right">
+                  {{ item.num | addComma }}
+                </td>
+                <td class="text-right" v-if="regi!='none'">
+                  {{ item.cavarege | orgRound }}%
+                </td>
+                <td class="text-right">
+                  <div :class="{ 'light-blue lighten-4' : item.rate >= 100  }">{{ item.rate | orgRound }}%</div>
+                </td>
+              </tr>
+            </template>
+              <!--template v-slot:item.all="{ item }">
                 {{ item.all | orgRound(regi) }}<span v-if="regi!='none'">%</span>
               </template>
               <template v-slot:item.regi="{ item }">
@@ -103,7 +124,7 @@
               </template>
               <template v-slot:item.rate="{ item }">
                 <div :class="{ 'light-blue lighten-4' : item.rate >= 100  }">{{ item.rate | orgRound }}%</div>
-              </template>
+              </template-->
             </v-data-table>
           </v-sheet>
         </v-col>
