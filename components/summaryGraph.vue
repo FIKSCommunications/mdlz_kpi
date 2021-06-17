@@ -156,6 +156,11 @@ export default {
     }
   },
   methods:{
+    // 小数点１桁表示
+    decimalRound(value) {
+      return (Math.round(value * Math.pow(10, 1))/Math.pow(10, 1)).toFixed(1);
+    },
+
     viewDetail:function(){
       if (this.viewFlg == true) {
         this.viewFlg = false;
@@ -182,9 +187,11 @@ export default {
       */
       this.summary.forEach(el => {
         if (this.regi != 'none') {
-          csv += '"全体","' + el['category'] + '",' + el['all'].toFixed(1) +','+ el['regi'] +','+ el['num'] +','+  el['cavarege'].toFixed(1) +','+ el['rate'].toFixed(1) + '\n\n';
+          //csv += '"全体","' + el['category'] + '",' + el['all'].toFixed(1) +','+ el['regi'] +','+ el['num'] +','+  el['cavarege'].toFixed(1) +','+ el['rate'].toFixed(1) + '\n\n';
+          csv += '"全体","' + el['category'] + '",' + this.decimalRound(el['all']) +','+ el['regi'] +','+ el['num'] +','+  this.decimalRound(el['cavarege']) +','+ this.decimalRound(el['rate']) + '\n\n';
         } else {
-          csv += '"全体","' + el['category'] + '",' + el['all'].toFixed(0) +','+ el['num'] +','+ el['rate'].toFixed(1) + '\n\n';
+          //csv += '"全体","' + el['category'] + '",' + el['all'].toFixed(0) +','+ el['num'] +','+ el['rate'].toFixed(1) + '\n\n';
+          csv += '"全体","' + el['category'] + '",' + Math.round(el['all']) +','+ el['num'] +','+ (this.decimalRound(el['rate'])).toFixed(1) + '\n\n';
         }
       });
 
@@ -193,9 +200,11 @@ export default {
       this.detalData.forEach(el => {
         let line = '';
         if (this.regi != 'none') {
-          line = '"' + el['chq'] +'",'+ el['category'] +'",'+ el['all'].toFixed(1) +','+ el['regi'] +','+ el['num'] +','+  el['cavarege'].toFixed(1) +','+  el['rate'].toFixed(1) + '\n';
+          //line = '"' + el['chq'] +'",'+ el['category'] +'",'+ el['all'].toFixed(1) +','+ el['regi'] +','+ el['num'] +','+  el['cavarege'].toFixed(1) +','+  el['rate'].toFixed(1) + '\n';
+          line = '"' + el['chq'] +'",'+ el['category'] +'",'+ this.decimalRound(el['all']) +','+ el['regi'] +','+ el['num'] +','+  this.decimalRound(el['cavarege']) +','+  this.decimalRound(el['rate']) + '\n';
         } else {
-          line = '"' + el['chq'] +'",'+ el['category'] +'",'+ el['all'].toFixed(0) +','+ el['num'] +','+  el['rate'].toFixed(1) + '\n';
+          //line = '"' + el['chq'] +'",'+ el['category'] +'",'+ el['all'].toFixed(0) +','+ el['num'] +','+  el['rate'].toFixed(1) + '\n';
+          line = '"' + el['chq'] +'",'+ el['category'] +'",'+ Math.round(el['all']) +','+ el['num'] +','+  (this.decimalRound(el['rate'])).toFixed(1) + '\n';
         }
         csv += line;
       })
@@ -226,10 +235,14 @@ export default {
 
       // 少数点1桁四捨五入
       if (regi !== 'none') {
-        ret = parseFloat(value).toFixed(1);
+        //ret = parseFloat(value).toFixed(1);
+        ret =  (Math.round(value * Math.pow(10, 1))/Math.pow(10, 1)).toFixed(1);
+        //ret = this.decimalRound(value);
       } else {
         // カンマ区切り
-        ret = value.toFixed(0);
+        //ret = value.toFixed(0);
+        ret = (Math.round(value)).toFixed(1);
+
         let formatter = new Intl.NumberFormat('ja-JP');
         ret = formatter.format(ret);
       }
