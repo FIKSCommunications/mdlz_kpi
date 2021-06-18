@@ -72,14 +72,6 @@
                 </v-select>
               </v-col>
               <v-col class="my-0 py-0">
-                <!-- <v-select
-                  v-model="checkedSales"
-                  multiple
-                  label="セールス"
-                  item-text="label"
-                  :items="selectSales"
-                >
-                </v-select> -->
                 <fiks-multiselectbox-component
                   @input="selected_sales_update"  
                   label="セールス" :listOptions="selectSales">
@@ -96,14 +88,6 @@
                 </v-select>
               </v-col>
               <v-col class="my-0 py-0">
-                <!-- <v-select
-                  v-model="checkedChq"
-                  multiple
-                  label="企業名"
-                  item-text="label"
-                  :items="selectChq"
-                >
-                </v-select> -->
                 <fiks-multiselectbox-component
                   @input="selected_chq_update"  
                   label="企業名" :listOptions="selectChq">
@@ -427,29 +411,6 @@ export default {
       viewFlgSummary:false,
     }
   },
-  /*
-  async mounted () {
-    console.log(this.token);
-    if (!this.token) {
-      console.log('no login');
-    }
-    const initFile = '/kpi_summary_login_ajax.php';
-    //let url = this.$urls.proPythonUrl + initFile;
-    let url = '/ddss_new' + initFile;
-    if (this.$urls.envFlg === 'dev') {
-      //url = this.$urls.devPythonUrl + initFile;
-      url = '/ddss_dev' + initFile;
-    }
-    let that = this;
-    const res = await axios.post(url,{
-      token: this.token,
-      clientid : this.clientid,
-      userid: this.userid,
-    })
-    console.log(res);
-
-  },
-  */
   
   created: async function() {
 
@@ -507,11 +468,17 @@ export default {
 
     // 選択条件のクリア
     clickFilterClear(){
-        this.selectHonbu = [];
-        this.selectGroup = [];
-        this.selectChanel = [];
-        this.selectSales = [];
-        this.selectChq = [];
+      this.selectHonbu = [];
+      this.selectGroup = [];
+      this.selectChanel = [];
+      this.selectSales = [];
+      this.selectChq = [];
+
+      this.checkedHonbu = [];
+      this.checkedGroup = [];
+      this.checkedSales = [];
+      this.checkedChanel = [];
+      this.checkedChq = [];
     },
 
     // 集計ボタン
@@ -780,120 +747,6 @@ export default {
     selected_chq_update(value) {
       this.checkedChq = value
     },
-    // 5.大陳列ログバージョン 使っていない
-    /*
-    calcDisplayGetData_log(){
-      this.displayData.loading = true;
-      this.displayData.all = 0;
-      this.displayData.num = 0;
-      this.displayData.rate = 0;
-      this.displayData.detail = [];
-      let url = this.$urls.proPythonUrl + '/kpi_summary5log.py';
-      if (this.$urls.envFlg === 'dev') {
-        url = this.$urls.devPythonUrl + '/kpi_summary5log.py';
-      }
-      const response = axios.get(url, {
-        //timeout: 30000,
-        params: {
-          'startdt': this.startDt,
-          'enddt': this.endDt,
-          'clientid': 162,
-          'checkedHonbu': this.checkedHonbu,
-          'checkedGroup': this.checkedGroup,
-          'checkedSales': this.checkedSales,
-          'checkedChanel': this.checkedChanel,
-        }
-      })
-      .then(function(data){
-        if (data.data.summary) {
-          // logから取得
-            this.displayData.all = data.data.summary.all;
-            this.displayData.num = data.data.summary.num;
-            this.displayData.rate = data.data.summary.rate;
-            this.displayData.detail = data.data.detail;
-            this.displayData.loading = false;        
-            return false
-        } else {
-          // 再計算
-
-          if (data.data.result) {
-
-            // 更新チェック処理　ここから
-            console.log(data.data.detail); //keyid
-
-            const numOfTime = 10; // ループ数
-            const delay = 10000; // スリーブ時間 ms
-
-            // 条件
-            let t = this
-            const judge = function(r,t) {
-                if(r.data.result == 'done') {
-                  const j = JSON.parse(r.data.detail)
-                  t.displayData.all = j.summary.all;
-                  t.displayData.num = j.summary.num;
-                  t.displayData.rate = j.summary.rate;
-                  t.displayData.detail = j.detail;
-                  return true;
-                }
-                return false;
-            };
-
-            // スリーブ
-            function sleep(time) {
-                return new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        resolve();
-                    }, time);
-                });
-            }
-
-            let watchurl = this.$urls.proPythonUrl + '/kpi_summary5watch.py';
-            if (this.$urls.envFlg === 'dev') {
-              watchurl = this.$urls.devPythonUrl + '/kpi_summary5watch.py';
-            }
-
-            // ループ
-            const loopFunc = async (delay, numOfTime, judge) => {
-                const arr = Array.from({length: numOfTime}, (v, k) => k);
-                for(let i of arr){
-                    let r = await axios.get(watchurl,{
-                      params:{ 'keyid': data.data.detail }
-                    })
-                    .then(function (response) {
-                        console.log(i, response);
-                        return Promise.resolve(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-                    // 条件処理を追加
-                    if(judge(r,t)){
-                        return Promise.resolve(1);
-                    }                  
-                    await sleep(delay);
-                } 
-            };
-            loopFunc(delay, numOfTime, judge).then(()=>{
-                console.log('done!!');
-                this.displayData.loading = false; 
-            });
-
-            // 更新チェック処理　ここまで
-
-          } else {
-            alert('失敗')
-            this.displayData.loading = false;        
-          }         
-
-        }
-      }.bind(this))
-      .catch(function(error){
-        console.log(error);
-        this.displayData.loading = false;        
-      }.bind(this));
-    },
-    */
-
   },
 }
 </script>
