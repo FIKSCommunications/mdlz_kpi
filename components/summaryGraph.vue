@@ -88,6 +88,7 @@
             hide-default-footer
             dense
             :search="search"
+            :sort-by="['chq']"
             >
             <template v-slot:item="{ item }">
               <tr :class="{ 'yellow lighten-5' : item.category==='ANY' && categoryFlg!=='none' }">
