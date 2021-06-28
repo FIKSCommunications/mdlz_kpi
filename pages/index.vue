@@ -74,7 +74,8 @@
               <v-col class="my-0 py-0">
                 <fiks-multiselectbox-component
                   @input="selected_sales_update"  
-                  label="セールス" :listOptions="selectSales">
+                  label="セールス" 
+                  :listOptions="selectSales">
                 </fiks-multiselectbox-component>
               </v-col>
               <v-col class="my-0 py-0">
@@ -90,7 +91,8 @@
               <v-col class="my-0 py-0">
                 <fiks-multiselectbox-component
                   @input="selected_chq_update"  
-                  label="企業名" :listOptions="selectChq">
+                  label="企業名" 
+                  :listOptions="selectChq">
                 </fiks-multiselectbox-component>
               </v-col>
             </v-row>
@@ -437,7 +439,7 @@ export default {
   },
   methods:{
     getSearchOption(){
-      if (this.endDt <= this.startDt) return false;
+      if (this.endDt < this.startDt) return false;
       const initFile = '/kpi_summaryinit_ajax.php';
       let url = this.$urls.ddssUrl+this.$urls.apiUrl + initFile;
       let that = this;
@@ -468,17 +470,24 @@ export default {
 
     // 選択条件のクリア
     clickFilterClear(){
-      this.selectHonbu = [];
-      this.selectGroup = [];
-      this.selectChanel = [];
-      this.selectSales = [];
-      this.selectChq = [];
+      /*
+      //this.selectHonbu = [];
+      //this.selectGroup = [];
+      //this.selectChanel = [];
+      //this.selectSales = [];
+      //this.selectChq = [];
 
       this.checkedHonbu = [];
       this.checkedGroup = [];
       this.checkedSales = [];
       this.checkedChanel = [];
       this.checkedChq = [];
+      // 検索オプションの取得
+      //this.selected_sales_update(this.selectSales);
+      //this.selected_chq_update(this.selectChq);
+      this.getSearchOption();
+      */
+      location.reload();
     },
 
     // 集計ボタン
